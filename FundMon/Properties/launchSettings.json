@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "FundMon (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "FundMon (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
