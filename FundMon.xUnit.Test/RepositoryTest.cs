@@ -44,6 +44,15 @@ public class RepositoryTest
     }
 
     [Fact, TestPriority(3)]
+    public void FundUpdateTest()
+    {
+        Assert.Equal(1, Repo.Funds[0].ID);
+        Repo.UpdateFund(1,"Fond modifié","Description fond modifié");
+        Assert.Equal("Fond modifié", Repo.Funds[0].Name);
+        Assert.Equal("Description fond modifié", Repo.Funds[0].Description);
+    }
+
+    [Fact, TestPriority(4)]
     public void SaveAndLoadRepoWithFundsAndPortfoliosTest()
     {
         m.Position = 0;
@@ -62,7 +71,16 @@ public class RepositoryTest
         Assert.Equal(2,Repo.Portfolios.Count);
     }
 
-    [Fact, TestPriority(4)]
+    [Fact, TestPriority(5)]
+    public void UpdatePortfolioTest()
+    {
+        Assert.Equal(1, Repo.Portfolios[0].ID);
+        Repo.UpdatePortfolio(1, "Portefeuille modifié", "Description modifiée");
+        Assert.Equal("Portefeuille modifié", Repo.Portfolios[0].Name);
+        Assert.Equal("Description modifiée", Repo.Portfolios[0].Description);
+    }
+
+    [Fact, TestPriority(6)]
     public void EmptyPortfolioFundsTest()
     {
         Assert.Equal(1, Repo.Portfolios[0].ID);
@@ -70,7 +88,7 @@ public class RepositoryTest
         Assert.Empty(portfolioFunds);
     }
 
-    [Fact,TestPriority(5)]
+    [Fact,TestPriority(7)]
     public void OneFundPortfolioTest()
     {
         Assert.Equal(2,Repo.Funds[1].ID);
@@ -81,7 +99,7 @@ public class RepositoryTest
         Assert.Equal(2,Repo.Portfolios[0].Funds[0].FundID);
     }
 
-    [Fact, TestPriority(6)]
+    [Fact, TestPriority(8)]
     public void RemovePortfolioTest()
     {
         Repo.RemovePortfolio(3);
@@ -90,7 +108,7 @@ public class RepositoryTest
         Assert.Single(Repo.Portfolios);
     }
 
-    [Fact, TestPriority(7)]
+    [Fact, TestPriority(9)]
     public void RemoveFundTest()
     {
         Repo.RemoveFund(3);

@@ -74,6 +74,16 @@ public static class Repo
         maxFundID++;
     }
 
+    public static void UpdateFund(int fundID, string name, string description)
+    {
+        Fund f = Funds.Find(f => f.ID == fundID);
+        if (f == null)
+            return;
+
+        f.Name = name;
+        f.Description = description;
+    }
+
     public static void RemoveFund(int fundID)
     {
         Fund fund = Funds.Find(f => f.ID == fundID);
@@ -92,6 +102,16 @@ public static class Repo
         Portfolio p = new(maxPortfolioID, name, new List<FundFigures>(), description);
         Portfolios.Add(p);
         maxPortfolioID++;
+    }
+
+    public static void UpdatePortfolio(int portfolioID, string name, string description)
+    {
+        Portfolio p = Portfolios.Find(f => f.ID == portfolioID);
+        if (p is null)
+            return;
+
+        p.Name = name;
+        p.Description = description;
     }
 
     public static void RemovePortfolio(int portfolioID)
