@@ -1,0 +1,36 @@
+﻿<Page
+    x:Class="FundMon.Pages.PortfoliosPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FundMon.Pages"
+    xmlns:repo="using:FundMon.Repository"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <StackPanel Orientation="Vertical" Margin="10">
+        <TextBlock Style="{ThemeResource TitleTextBlockStyle}">Portefeuilles</TextBlock>
+        <GridView 
+            ItemsSource="{x:Bind ViewModel.Portfolios, Mode=OneWay}" 
+            Margin="10,20,10,0" 
+            IsDoubleTapEnabled="True" 
+            DoubleTapped="GridView_DoubleTapped" 
+            SelectionChanged="GridView_SelectionChanged"
+            x:Name="GridView">
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="repo:Portfolio">
+                    <StackPanel Orientation="Vertical" Padding="10">
+                        <TextBlock Text="{x:Bind Name}" Style="{ThemeResource SubtitleTextBlockStyle}"/>
+                        <TextBlock Text="{x:Bind Description}" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </GridView.ItemTemplate>
+        </GridView>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <TextBox x:Name="NameTextBox" Header="Nom" TextChanged="NameTextBox_TextChanged" MinWidth="100" />
+            <TextBox x:Name="DescriptionTextBox" Header="Description" MinWidth="100" />
+            <Button x:Name="AddButton" Click="AddButton_Click" Content="Ajouter" IsEnabled="False" VerticalAlignment="Bottom"/>
+        </StackPanel>
+    </StackPanel>
+</Page>

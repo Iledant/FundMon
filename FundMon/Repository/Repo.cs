@@ -6,21 +6,21 @@ using System.Text;
 
 namespace FundMon.Repository;
 
-public static class Repo
+public class Repo
 {
-    public static List<Portfolio> Portfolios { get; internal set; }
-    public static List<Fund> Funds { get; internal set; }
+    public List<Portfolio> Portfolios { get; internal set; }
+    public List<Fund> Funds { get; internal set; }
     private const string Header = "FundMon 1.0";
-    private static int maxFundID = 1;
-    private static int maxPortfolioID = 1;
+    private int maxFundID = 1;
+    private int maxPortfolioID = 1;
 
-    static Repo()
+    public Repo()
     {
         Portfolios = new();
         Funds = new();
     }
 
-    public static void Save(Stream fs)
+    public void Save(Stream fs)
     {
         byte[] headerBytes = UTF8Encoding.UTF8.GetBytes(Header);
         fs.Write(headerBytes, 0, headerBytes.Length);
@@ -34,7 +34,7 @@ public static class Repo
             f.Save(fs);
     }
 
-    public static List<Fund> PortfolioFunds(int portfolioID)
+    public List<Fund> PortfolioFunds(int portfolioID)
     {
         List<Fund> funds = new();
         Portfolio portfolio = Portfolios.Find(p => p.ID == portfolioID);
@@ -51,7 +51,7 @@ public static class Repo
         return funds;
     }
 
-    public static List<FundPerformance> PortfolioPerformance(int portfolioID)
+    public List<FundPerformance> PortfolioPerformance(int portfolioID)
     {
         List<FundPerformance> fundPerformances = new();
         Portfolio portfolio = Portfolios.Find(p => p.ID == portfolioID);
@@ -67,14 +67,14 @@ public static class Repo
         return fundPerformances;
     }
 
-    public static void AddFund(string name, string morningstarID, string description = "")
+    public void AddFund(string name, string morningstarID, string description = "")
     {
         Fund f = new(maxFundID, name, morningstarID, description);
         Funds.Add(f);
         maxFundID++;
     }
 
-    public static void UpdateFund(int fundID, string name, string description)
+    public void UpdateFund(int fundID, string name, string description)
     {
         Fund f = Funds.Find(f => f.ID == fundID);
         if (f == null)
@@ -84,7 +84,7 @@ public static class Repo
         f.Description = description;
     }
 
-    public static void RemoveFund(int fundID)
+    public void RemoveFund(int fundID)
     {
         Fund fund = Funds.Find(f => f.ID == fundID);
 
@@ -97,14 +97,14 @@ public static class Repo
             p.Funds.RemoveAll(f => f.FundID == fundID);
     }
 
-    public static void AddPortfolio(string name, string description = "")
+    public void AddPortfolio(string name, string description = "")
     {
         Portfolio p = new(maxPortfolioID, name, new List<FundFigures>(), description);
         Portfolios.Add(p);
         maxPortfolioID++;
     }
 
-    public static void UpdatePortfolio(int portfolioID, string name, string description)
+    public void UpdatePortfolio(int portfolioID, string name, string description)
     {
         Portfolio p = Portfolios.Find(f => f.ID == portfolioID);
         if (p is null)
@@ -114,7 +114,7 @@ public static class Repo
         p.Description = description;
     }
 
-    public static void RemovePortfolio(int portfolioID)
+    public void RemovePortfolio(int portfolioID)
     {
         Portfolio portfolio = Portfolios.Find(p => p.ID == portfolioID);
 
@@ -122,7 +122,7 @@ public static class Repo
             Portfolios.Remove(portfolio);
     }
 
-    public static void AddFundToPortfolio(int portfolioID, int fundID, double averageCost)
+    public void AddFundToPortfolio(int portfolioID, int fundID, double averageCost)
     {
         Portfolio p = Portfolios.Find(p => p.ID == portfolioID);
 
@@ -132,7 +132,7 @@ public static class Repo
         p.Funds.Add(new FundFigures(fundID, averageCost));
     }
 
-    public static void Load(Stream fs)
+    public void Load(Stream fs)
     {
         ReadAndCheckHeader(fs);
         List<Portfolio> portfolios = ReadPortfolios(fs);
@@ -144,7 +144,7 @@ public static class Repo
         Funds = funds;
     }
 
-    private static List<Fund> ReadFunds(Stream fs)
+    private List<Fund> ReadFunds(Stream fs)
     {
         List<Fund> funds = new();
         int fundsCount = FileHelper.ReadInt(fs);
@@ -154,7 +154,7 @@ public static class Repo
         return funds;
     }
 
-    private static List<Portfolio> ReadPortfolios(Stream fs)
+    private List<Portfolio> ReadPortfolios(Stream fs)
     {
         List<Portfolio> portfolios = new();
         int portfoliosCount = FileHelper.ReadInt(fs);
@@ -164,7 +164,7 @@ public static class Repo
         return portfolios;
     }
 
-    private static void ReadAndCheckHeader(Stream fs)
+    private void ReadAndCheckHeader(Stream fs)
     {
         byte[] headerBytes = UTF8Encoding.UTF8.GetBytes(Header);
         fs.Read(headerBytes, 0, headerBytes.Length);
@@ -174,7 +174,7 @@ public static class Repo
             throw new Exception("Erreur de header");
     }
 
-    private static void CalculateMaxFundID(List<Fund> funds)
+    private void CalculateMaxFundID(List<Fund> funds)
     {
         if (funds.Count == 0)
         {
@@ -184,7 +184,7 @@ public static class Repo
         maxFundID = Funds.Max(f => f.ID) + 1;
     }
 
-    private static void CalculateMaxPortfolioID(List<Portfolio> portfolios)
+    private void CalculateMaxPortfolioID(List<Portfolio> portfolios)
     {
         if (portfolios.Count == 0)
         {
