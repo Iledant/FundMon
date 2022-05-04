@@ -1,4 +1,5 @@
 ﻿using FundMon.Repository;
+using FundMon.ViewModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
@@ -15,6 +16,7 @@ namespace FundMon.Pages
     {
         private Portfolio SelectedPortfolio = null;
         private Repo Repo = null;
+        private RepositoryViewModel ViewModel = null;
         public PortfolioZoomPage()
         {
             this.InitializeComponent();
@@ -33,6 +35,16 @@ namespace FundMon.Pages
             }
 
             base.OnNavigatedTo(e);
+        }
+
+        private void GridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void FundGridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        {
+
         }
     }
 }

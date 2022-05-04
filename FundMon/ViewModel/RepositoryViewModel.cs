@@ -5,9 +5,10 @@ namespace FundMon.ViewModel;
 
 public class RepositoryViewModel : Bindable
 {
-    private readonly Repo _repository;
-    private List<Portfolio> _portfolios;
-    private List<Fund> _funds;
+    private readonly Repo _repository = new();
+    private List<Portfolio> _portfolios = new();
+    private List<Fund> _funds = new();
+    private List<Fund> _portfolioFunds = new();
 
     public RepositoryViewModel(Repo repository)
     {
@@ -32,6 +33,16 @@ public class RepositoryViewModel : Bindable
         {
             _funds = new List<Fund>(value);
             OnPropertyChanged(nameof(Funds));
+        }
+    }
+
+    public List<Fund> PortfolioFunds
+    {
+        get => _portfolioFunds;
+        set
+        {
+            _portfolioFunds= new List<Fund>(value);
+            OnPropertyChanged(nameof(PortfolioFunds));
         }
     }
 
@@ -69,5 +80,10 @@ public class RepositoryViewModel : Bindable
     {
         _repository.RemoveFund(fundID);
         Funds = _repository.Funds;
+    }
+
+    public void FetchPortfolioFunds(Portfolio p)
+    {
+        PortfolioFunds = _repository.PortfolioFunds(p.ID);
     }
 }
