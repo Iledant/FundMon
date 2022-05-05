@@ -28,6 +28,8 @@ namespace FundMon.Pages
             {
                 (SelectedPortfolio, Repo) = e.Parameter as RepoAndSelectedPortfolio;
                 TitleTextBox.Text = "Portefeuille " + SelectedPortfolio.Name;
+                ViewModel = new(Repo);
+                ViewModel.FetchPortfolioFunds(SelectedPortfolio);
             }
             else
             {
@@ -37,14 +39,36 @@ namespace FundMon.Pages
             base.OnNavigatedTo(e);
         }
 
-        private void GridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        private void FundGridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
         {
 
         }
 
-        private void FundGridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        private void FundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void FundSearchButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            ViewModel.FetchMorningstarResults(FundSearchTextBox.Text);
+        }
+
+        private void FundSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            FundSearchButton.IsEnabled = FundSearchTextBox.Text != "";
+        }
+
+        private void AddFundButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+        {
+            MorningstarResponseLine result = FundSearchGridView.SelectedItem as MorningstarResponseLine;
+            int fundID = Repo.AddFund(result.Name, result.MorningStarID);
+            Repo.AddFundToPortfolio(SelectedPortfolio.ID, fundID, 0);
+        }
+
+        private void FundSearchGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            AddFundButton.IsEnabled = FundSearchGridView.SelectedItem != null;
         }
     }
 }

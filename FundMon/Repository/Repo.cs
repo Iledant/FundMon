@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FundMon.Repository;
 
@@ -67,11 +68,12 @@ public class Repo
         return fundPerformances;
     }
 
-    public void AddFund(string name, string morningstarID, string description = "")
+    public int AddFund(string name, string morningstarID, string description = "")
     {
         Fund f = new(maxFundID, name, morningstarID, description);
         Funds.Add(f);
         maxFundID++;
+        return maxFundID - 1;
     }
 
     public void UpdateFund(int fundID, string name, string description)

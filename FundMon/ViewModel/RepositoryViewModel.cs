@@ -9,6 +9,8 @@ public class RepositoryViewModel : Bindable
     private List<Portfolio> _portfolios = new();
     private List<Fund> _funds = new();
     private List<Fund> _portfolioFunds = new();
+    private List<FundPerformance> _portfolioFundsPerformance = new();
+    private List<MorningstarResponseLine> _morningstarResults = new();
 
     public RepositoryViewModel(Repo repository)
     {
@@ -43,6 +45,26 @@ public class RepositoryViewModel : Bindable
         {
             _portfolioFunds= new List<Fund>(value);
             OnPropertyChanged(nameof(PortfolioFunds));
+        }
+    }
+
+    public List<FundPerformance> PortfolioFundsPerformance
+    {
+        get => _portfolioFundsPerformance;
+        set
+        {
+            _portfolioFundsPerformance = new List<FundPerformance>(value);
+            OnPropertyChanged(nameof(PortfolioFundsPerformance));
+        }
+    }
+
+    public List<MorningstarResponseLine> MorningstarResults
+    {
+        get => _morningstarResults;
+        set
+        {
+            _morningstarResults = new List<MorningstarResponseLine>(value);
+            OnPropertyChanged(nameof(MorningstarResults));
         }
     }
 
@@ -85,5 +107,15 @@ public class RepositoryViewModel : Bindable
     public void FetchPortfolioFunds(Portfolio p)
     {
         PortfolioFunds = _repository.PortfolioFunds(p.ID);
+    }
+
+    public void FetchPortfolioFundsPerformance(Portfolio p)
+    {
+        PortfolioFundsPerformance = _repository.PortfolioPerformance(p.ID);
+    }
+
+    public async void FetchMorningstarResults(string pattern)
+    {
+        MorningstarResults = await MorningStarHelpers.FetchFunds(pattern);
     }
 }
