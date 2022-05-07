@@ -78,6 +78,7 @@ internal static class MorningStarHelpers
 
     private static List<MorningstarResponseLine> ParseMorningstarResponse(string content)
     {
+        char[] charToStrim = { '\n', '\r' };
         string[] lines = content.Split("\n");
         List<MorningstarResponseLine> pickStocks = new();
         foreach (string line in lines)
@@ -95,11 +96,11 @@ internal static class MorningStarHelpers
             }
             pickStocks.Add(new MorningstarResponseLine
             {
-                Name = fields[0],
+                Name = fields[0].Trim(charToStrim),
                 MorningStarID = fields[1].Substring(left, right - left),
-                Category = fields[5],
-                Place = fields[4],
-                Abbreviation = fields[3]
+                Category = fields[5].Trim(charToStrim),
+                Place = fields[4].Trim(charToStrim),
+                Abbreviation = fields[3].Trim(charToStrim)
             });
         }
         return pickStocks;

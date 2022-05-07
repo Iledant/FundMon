@@ -15,26 +15,12 @@ namespace FundMon.Pages;
 /// </summary>
 public sealed partial class PortfoliosPage : Page
 {
-    private RepositoryViewModel ViewModel;
+    private PortfoliosViewModel ViewModel;
     private Portfolio SelectedPortfolio = null;
-    private Repo Repo = null;
     public PortfoliosPage()
     {
         this.InitializeComponent();
-    }
-    protected override void OnNavigatedTo(NavigationEventArgs e)
-    {
-        if (e.Parameter is Repo)
-        {
-            Repo = (Repo)e.Parameter;
-            ViewModel = new(Repo);
-        }
-        else
-        {
-            throw new Exception("Repo parameter expected");
-        }
-        
-        base.OnNavigatedTo(e);
+        ViewModel = new();
     }
 
 
@@ -63,10 +49,7 @@ public sealed partial class PortfoliosPage : Page
     {
         if (GridView.SelectedItem is Portfolio)
         {
-            this.Frame.Navigate(typeof(PortfolioZoomPage),
-                new RepoAndSelectedPortfolio{ 
-                    SelectedPortfolio = GridView.SelectedItem as Portfolio, 
-                    Repo = Repo });
+            this.Frame.Navigate(typeof(PortfolioZoomPage), GridView.SelectedItem as Portfolio);
         }
     }
 

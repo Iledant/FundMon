@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FundMon.Pages"
     xmlns:repo="using:FundMon.Repository"
+    xmlns:format="using:FundMon.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -17,27 +18,58 @@
             IsDoubleTapEnabled="True"
             DoubleTapped="FundGridView_DoubleTapped"
             SelectionChanged="FundGridView_SelectionChanged"
-            ItemsSource="{x:Bind ViewModel.PortfolioFundsPerformance, Mode=OneWay}"
+            ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}"
             >
         <GridView.ItemTemplate>
             <DataTemplate x:DataType="repo:FundPerformance">
-                <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Vertical" Margin="10">
                     <TextBlock Text="{x:Bind Fund.Name}" Style="{ThemeResource SubtitleTextBlockStyle}" />
-                    <TextBlock Text="{x:Bind LastWeekValue}" Style="{ThemeResource CaptionTextBlockStyle}" />
+                    <Grid ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="Coût moyen" Grid.Column="0" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(AverageCost)}" 
+                                   Grid.Column="1" Grid.Row="0" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   HorizontalAlignment="Right"/>
+                        <TextBlock Text="Dernière valeur" Grid.Column="0" Grid.Row="1" Style="{ThemeResource CaptionTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastValue)}"
+                                   Grid.Column="1" Grid.Row="1" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}"
+                                   HorizontalAlignment="Right"/>
+                        <TextBlock Text="Semaine dernière" Grid.Column="0" Grid.Row="2" Style="{ThemeResource CaptionTextBlockStyle}" />
+                        <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastWeekValue)}"
+                                   Grid.Column="1" Grid.Row="2" 
+                                   Style="{ThemeResource CaptionTextBlockStyle}" 
+                                   HorizontalAlignment="Right"/>
+                    </Grid>
+                           
                 </StackPanel>
             </DataTemplate>
         </GridView.ItemTemplate>
         </GridView>
 
         <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="FundSearchTextBox" PlaceholderText="Nom ou ID du fond" TextChanged="FundSearchTextBox_TextChanged"/>
+            <TextBox 
+                x:Name="FundSearchTextBox" 
+                PlaceholderText="Nom ou ID du fond" 
+                TextChanged="FundSearchTextBox_TextChanged"
+                MinWidth="250"/>
             <Button x:Name="FundSearchButton" Click="FundSearchButton_Click" IsEnabled="False">Chercher</Button>
         </StackPanel>
 
-        <GridView x:Name="FundSearchGridView" ItemsSource="{x:Bind ViewModel.MorningstarResults, Mode=OneWay}" Margin="30,10,10,0" SelectionChanged="FundSearchGridView_SelectionChanged">
+        <ProgressBar Visibility="Collapsed" IsIndeterminate="True" x:Name="FundSearchProgressBar" />
+        <GridView x:Name="FundSearchGridView" ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}" Margin="30,10,10,0" SelectionChanged="FundSearchGridView_SelectionChanged">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="repo:MorningstarResponseLine">
-                    <Grid ColumnSpacing="5" Margin="5">
+                    <Grid ColumnSpacing="10" Margin="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -48,11 +80,11 @@
                             <ColumnDefinition Width="Auto" MinWidth="10" />
                             <ColumnDefinition Width="Auto" MinWidth="10" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Grid.Row="0"><Italic>Nom</Italic></TextBlock>
+                        <TextBlock Grid.Column="0" Grid.Row="0" Text="Nom" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind Name}" Grid.Column="1" Grid.Row="0"/>
-                        <TextBlock Grid.Column="0" Grid.Row="1"><Italic>Catégorie</Italic></TextBlock>
+                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Catégorie" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind Category}" Grid.Column="1" Grid.Row="1"/>
-                        <TextBlock Grid.Column="0" Grid.Row="2"><Italic>ID</Italic></TextBlock>
+                        <TextBlock Grid.Column="0" Grid.Row="2" Text="ID" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
                         <TextBlock Text="{x:Bind MorningStarID}" Grid.Column="1" Grid.Row="2"/>
                     </Grid>
                 </DataTemplate>

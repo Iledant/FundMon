@@ -13,12 +13,10 @@ namespace FundMon;
 /// </summary>
 public sealed partial class MainWindow : Window
 {
-    private readonly Repo Repository;
 
     public MainWindow()
     {
         InitializeComponent();
-        Repository = new Repo();
-        RootFrame.Navigate(typeof(PortfoliosPage), Repository);
+        RootFrame.Navigate(typeof(PortfoliosPage));
     }
 }
