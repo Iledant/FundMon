@@ -1,6 +1,6 @@
-﻿using FundMon.Pages;
+﻿using FundMon.Config;
+using FundMon.Pages;
 using FundMon.Repository;
-using FundMon.ViewModel;
 using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -17,6 +17,13 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Repo.Load(AppConfig.File);
         RootFrame.Navigate(typeof(PortfoliosPage));
+    }
+
+    private void Window_Closed(object sender, WindowEventArgs args)
+    {
+        Repo.Save(AppConfig.File);
+        AppConfig.SaveAndClose();
     }
 }

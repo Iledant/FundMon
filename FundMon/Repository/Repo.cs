@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FundMon.Repository;
 
@@ -17,6 +16,9 @@ public static class Repo
 
     public static void Save(Stream fs)
     {
+        fs.Flush();
+        fs.SetLength(0);
+        fs.Position = 0;
         byte[] headerBytes = UTF8Encoding.UTF8.GetBytes(Header);
         fs.Write(headerBytes, 0, headerBytes.Length);
 
@@ -27,6 +29,8 @@ public static class Repo
         FileHelper.WriteInt(fs, Funds.Count);
         foreach (Fund f in Funds)
             f.Save(fs);
+
+        fs.Flush();
     }
 
     public static List<Fund> PortfolioFunds(int portfolioID)
@@ -177,7 +181,7 @@ public static class Repo
             maxFundID = 1;
             return;
         }
-        maxFundID = Funds.Max(f => f.ID) + 1;
+        maxFundID = funds.Max(f => f.ID) + 1;
     }
 
     private static void CalculateMaxPortfolioID(List<Portfolio> portfolios)
@@ -187,6 +191,6 @@ public static class Repo
             maxPortfolioID = 1;
             return;
         }
-        maxPortfolioID = Portfolios.Max(p => p.ID) + 1;
+        maxPortfolioID = portfolios.Max(p => p.ID) + 1;
     }
 }
