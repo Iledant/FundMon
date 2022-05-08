@@ -32,11 +32,11 @@ public class MorningStarPayloadRoot
 
 public class MorningstarResponseLine
 {
-    public string Name;
-    public string MorningStarID;
-    public string Category;
-    public string Place;
-    public string Abbreviation;
+    public string? Name;
+    public string? MorningStarID;
+    public string? Category;
+    public string? Place;
+    public string? Abbreviation;
 }
 
 internal static class MorningStarHelpers
