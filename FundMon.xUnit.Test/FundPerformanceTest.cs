@@ -13,11 +13,11 @@ namespace FundMon.xUnit.Test
             DateTime now = DateTime.Now;
             FundPerformance fundPerformance = new FundPerformance{Fund = fund, AverageCost = 150.0};
             Assert.Equal(double.NaN, fundPerformance.LastWeekValue);
-            fund.Historical.Add(new DateValue { Date = now.AddDays(-9), Value = 123.5 });
+            fund.Historical.Add(new DateValue(123.5, now.AddDays(-9)));
             Assert.Equal(123.5, fundPerformance.LastWeekValue);
-            fund.Historical.Add(new DateValue { Date = now.AddDays(-8), Value = 124.5 });
+            fund.Historical.Add(new DateValue(124.5, now.AddDays(-8)));
             Assert.Equal(124.5, fundPerformance.LastWeekValue);
-            fund.Historical.Add(new DateValue { Date = now.AddDays(-7), Value = 125.5 });
+            fund.Historical.Add(new DateValue(125.5, now.AddDays(-7)));
             Assert.Equal(125.5, fundPerformance.LastWeekValue);
         }
     }

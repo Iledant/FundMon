@@ -2,6 +2,7 @@
 using FundMon.Repository;
 using System.IO;
 using System.Collections.Generic;
+using System;
 
 namespace FundMon.xUnit.Test;
 
@@ -117,4 +118,25 @@ public class RepositoryTest
         Assert.Single(Repo.Funds);
         Assert.Empty(Repo.Portfolios[0].Funds);
     }
+
+    [Fact, TestPriority(10)]
+    public void SaveAndLoadRepoWithFundsHistoricalAndPortfoliosTest()
+    {
+        m.Position = 0;
+
+        Assert.Single(Repo.Funds);
+        Repo.Funds[0].Historical.Add(new DateValue(12.5, new DateTime(2020, 4, 1)));
+
+        Repo.Save(m);
+
+        m.Flush();
+        m.Position = 0;
+
+        Repo.Load(m);
+
+        Assert.Single(Repo.Funds);
+        Assert.Single(Repo.Portfolios);
+        Assert.Single(Repo.Funds[0].Historical);
+    }
+
 }

@@ -19,6 +19,7 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
         Repo.Load(AppConfig.File);
         RootFrame.Navigate(typeof(PortfoliosPage));
+        Repo.UpdateFundsHistorical();
     }
 
     private void Window_Closed(object sender, WindowEventArgs args)
