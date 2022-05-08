@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace FundMon.Repository;
 
@@ -57,6 +59,19 @@ public class Fund
     public async void FetchHistorical()
     {
         if (MorningStarID != "")
-            Historical = await MorningStarHelpers.GetHistoricalFromID(MorningStarID);
+        {
+            DateTime latestDate = Historical.Max(dv => dv.Date);
+            List<DateValue> historical = await MorningStarHelpers.GetHistoricalFromID(MorningStarID,latestDate);
+            if (historical is null)
+                return;
+            foreach (DateValue value in historical)
+            {
+                DateValue found = Historical.Find(dv => dv.Date == value.Date);
+                if (found is not null)
+                    Historical.Remove(found);
+                Historical.Add(value);
+            }
+            Historical.Sort( (d1, d2) => d1.Date.CompareTo(d2.Date));
+        }
     }
 }
