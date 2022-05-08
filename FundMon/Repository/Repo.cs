@@ -193,4 +193,12 @@ public static class Repo
         }
         maxPortfolioID = portfolios.Max(p => p.ID) + 1;
     }
+
+    public static async void UpdateFundsHistorical()
+    {
+        foreach (Fund f in Funds)
+        {
+            f.Historical = await MorningStarHelpers.GetHistoricalFromID(f.MorningStarID);
+        }
+    }
 }

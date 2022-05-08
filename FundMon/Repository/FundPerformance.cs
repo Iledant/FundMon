@@ -13,13 +13,13 @@ public class FundPerformance
         if (Fund is null || Fund.Historical is null || Fund.Historical.Count == 0)
             return double.NaN;
         DateValue exact = Fund.Historical.Find(f => (now - f.Date).Days == days);
-        if (exact.Date != default)
+        if (exact is not null)
             return exact.Value;
         DateValue further = Fund.Historical.Find(f => (now - f.Date).Days == days + 1);
-        if (further.Date != default)
+        if (further is not null)
             return further.Value;
         DateValue further2 = Fund.Historical.Find(f => (now - f.Date).Days == days + 2);
-        if (further2.Date != default)
+        if (further2 is not null)
             return further2.Value;
         return double.NaN;
 

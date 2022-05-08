@@ -69,9 +69,9 @@ internal static class MorningStarHelpers
             {
                 throw new Exception("Erreur de format de réponse");
             }
-            values.Add(new DateValue(new DateTime(int.Parse(h.EndDate.Substring(0, 4)),
+            values.Add(new DateValue(double.Parse(h.Value, _numberFormat), new DateTime(int.Parse(h.EndDate.Substring(0, 4)),
                 int.Parse(h.EndDate.Substring(5, 2)),
-                int.Parse(h.EndDate.Substring(8, 2))), double.Parse(h.Value, _numberFormat)));
+                int.Parse(h.EndDate.Substring(8, 2)))));
         }
         return values;
     }

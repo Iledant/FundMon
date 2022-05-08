@@ -27,12 +27,18 @@ public class Fund
         string name = FileHelper.ReadString(fs);
         string description = FileHelper.ReadString(fs);
         string morningStarID = FileHelper.ReadString(fs);
+        int historicalCount = FileHelper.ReadInt(fs);
+        List<DateValue> historical = new List<DateValue>();
+        for (int i = 0; i < historicalCount; i++)
+        {
+            historical.Add(new DateValue(fs));
+        }
         
         ID = id;
         Name = name;
         Description = description;
         MorningStarID = morningStarID;
-        Historical = new List<DateValue>();
+        Historical = historical;
     }
 
     public void Save(Stream fs)
@@ -41,6 +47,11 @@ public class Fund
         FileHelper.WriteUTF8String(fs, Name);
         FileHelper.WriteUTF8String(fs, Description);
         FileHelper.WriteUTF8String(fs, MorningStarID);
+        FileHelper.WriteInt(fs, Historical.Count);
+        foreach (DateValue value in Historical)
+        {
+            value.Save(fs);
+        }
     }
 
     public async void FetchHistorical()

@@ -28,6 +28,13 @@ static class FileHelper
         return Encoding.UTF8.GetString(buffer);
     }
 
+    public static DateTime ReadDateTime(Stream fs)
+    {
+        byte[] buffer = new byte[8];
+        fs.Read(buffer, 0, 6);
+        return new DateTime(BitConverter.ToInt64(buffer, 0));
+    }
+
     public static void WriteUTF8String(Stream fs, string s)
     {
         byte[] buffer = UTF8Encoding.UTF8.GetBytes(s);
@@ -45,6 +52,12 @@ static class FileHelper
     public static void WriteDouble(Stream fs, double d)
     {
         byte[] buffer = BitConverter.GetBytes(d);
+        fs.Write(buffer, 0, buffer.Length);
+    }
+
+    public static void WriteDateTime(Stream fs, DateTime d)
+    {
+        byte[] buffer = BitConverter.GetBytes((long)d.Ticks);
         fs.Write(buffer, 0, buffer.Length);
     }
 }
