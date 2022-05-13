@@ -31,7 +31,7 @@ static class FileHelper
     public static DateTime ReadDateTime(Stream fs)
     {
         byte[] buffer = new byte[8];
-        fs.Read(buffer, 0, 6);
+        fs.Read(buffer, 0, 8);
         return new DateTime(BitConverter.ToInt64(buffer, 0));
     }
 
@@ -57,7 +57,7 @@ static class FileHelper
 
     public static void WriteDateTime(Stream fs, DateTime d)
     {
-        byte[] buffer = BitConverter.GetBytes((long)d.Ticks);
+        byte[] buffer = BitConverter.GetBytes(d.Ticks);
         fs.Write(buffer, 0, buffer.Length);
     }
 }
