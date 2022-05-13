@@ -3,6 +3,7 @@ using FundMon.ViewModel;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -17,6 +18,8 @@ namespace FundMon.Pages
     {
         private Portfolio SelectedPortfolio = null;
         private PortfolioZoomViewModel ViewModel = null;
+        static CultureInfo ci = new("fr-FR");
+        private double averageCost;
         public PortfolioZoomPage()
         {
             InitializeComponent();
@@ -50,11 +53,13 @@ namespace FundMon.Pages
 
         private async void FundSearchButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
-            FundSearchProgressBar.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            FundSearchProgressRing.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            FundSearchButton.IsEnabled = false;
             await Task.Delay(1);
             int _  = await ViewModel.FetchMorningstarResults(FundSearchTextBox.Text);
             await Task.Delay(1);
-            FundSearchProgressBar.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+            FundSearchProgressRing.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+            FundSearchButton.IsEnabled = true;
         }
 
         private void FundSearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -65,12 +70,28 @@ namespace FundMon.Pages
         private void AddFundButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
         {
             MorningstarResponseLine result = FundSearchGridView.SelectedItem as MorningstarResponseLine;
-            ViewModel.AddFund(result);
+            ViewModel.AddFund(result,averageCost);
+            AverageCostTextBox.IsEnabled = false;
+            AverageCostTextBox.Text = "";
+            AddFundButton.IsEnabled = false;
         }
 
         private void FundSearchGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AddFundButton.IsEnabled = FundSearchGridView.SelectedItem != null;
+            AverageCostTextBox.IsEnabled = FundSearchGridView.SelectedItem != null;
+        }
+
+        private void AverageCostTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                averageCost = double.Parse(AverageCostTextBox.Text, ci);
+                AddFundButton.IsEnabled = true;
+            }
+            catch (Exception)
+            {
+                AddFundButton.IsEnabled = false;
+            }
         }
     }
 }

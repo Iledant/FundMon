@@ -20,59 +20,62 @@
             SelectionChanged="FundGridView_SelectionChanged"
             ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}"
             >
-        <GridView.ItemTemplate>
-            <DataTemplate x:DataType="repo:FundPerformance">
-                <StackPanel Orientation="Vertical" Margin="10">
-                    <TextBlock Text="{x:Bind Fund.Name}" Style="{ThemeResource SubtitleTextBlockStyle}" />
-                    <Grid ColumnSpacing="10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="Coût moyen" Grid.Column="0" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}" />
-                        <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(AverageCost)}" 
-                                   Grid.Column="1" Grid.Row="0" 
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
-                                   HorizontalAlignment="Right"/>
-                        <TextBlock Text="Dernière valeur" Grid.Column="0" Grid.Row="1" Style="{ThemeResource CaptionTextBlockStyle}" />
-                        <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastValue)}"
-                                   Grid.Column="1" Grid.Row="1" 
-                                   Style="{ThemeResource CaptionTextBlockStyle}"
-                                   HorizontalAlignment="Right"/>
-                        <TextBlock Text="Semaine dernière" Grid.Column="0" Grid.Row="2" Style="{ThemeResource CaptionTextBlockStyle}" />
-                        <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastWeekValue)}"
-                                   Grid.Column="1" Grid.Row="2" 
-                                   Style="{ThemeResource CaptionTextBlockStyle}" 
-                                   HorizontalAlignment="Right"/>
-                        <TextBlock Text="Mois dernier" Grid.Column="0" Grid.Row="3" Style="{ThemeResource CaptionTextBlockStyle}" />
-                        <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastMonthValue)}"
-                                   Grid.Column="1" Grid.Row="3" 
-                                   Style="{ThemeResource CaptionTextBlockStyle}" 
-                                   HorizontalAlignment="Right"/>
-                    </Grid>
-                           
-                </StackPanel>
-            </DataTemplate>
-        </GridView.ItemTemplate>
+            <GridView.ItemTemplate>
+                <DataTemplate x:DataType="repo:FundPerformance">
+                    <StackPanel Orientation="Vertical" Padding="10" Background="{x:Bind format:Formatter.PerfToColor(Evolution)}">
+                        <TextBlock Text="{x:Bind Fund.Name}" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                        <Grid ColumnSpacing="10" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Coût moyen" Grid.Column="0" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}" />
+                            <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(AverageCost)}" 
+                                        Grid.Column="1" Grid.Row="0" 
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        HorizontalAlignment="Right"/>
+                            <TextBlock Text="Dernière valeur" Grid.Column="0" Grid.Row="1" Style="{ThemeResource CaptionTextBlockStyle}" />
+                            <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastValue)}"
+                                        Grid.Column="1" Grid.Row="1" 
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        HorizontalAlignment="Right"/>
+                            <TextBlock Text="Semaine dernière" Grid.Column="0" Grid.Row="2" Style="{ThemeResource CaptionTextBlockStyle}" />
+                            <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastWeekValue)}"
+                                        Grid.Column="1" Grid.Row="2" 
+                                        Style="{ThemeResource CaptionTextBlockStyle}" 
+                                        HorizontalAlignment="Right"/>
+                            <TextBlock Text="Mois dernier" Grid.Column="0" Grid.Row="3" Style="{ThemeResource CaptionTextBlockStyle}" />
+                            <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastMonthValue)}"
+                                        Grid.Column="1" Grid.Row="3" 
+                                        Style="{ThemeResource CaptionTextBlockStyle}" 
+                                        HorizontalAlignment="Right"/>
+                        </Grid>
+                    </StackPanel>
+                </DataTemplate>
+            </GridView.ItemTemplate>
         </GridView>
 
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal" Spacing="20" Margin="10,0,0,0">
+            <TextBlock Text="Recherche Morningstar" VerticalAlignment="Center"/>
             <TextBox 
                 x:Name="FundSearchTextBox" 
-                PlaceholderText="Nom ou ID du fond" 
                 TextChanged="FundSearchTextBox_TextChanged"
                 MinWidth="250"/>
             <Button x:Name="FundSearchButton" Click="FundSearchButton_Click" IsEnabled="False">Chercher</Button>
+            <ProgressRing Visibility="Collapsed" IsIndeterminate="True" x:Name="FundSearchProgressRing" />
         </StackPanel>
 
-        <ProgressBar Visibility="Collapsed" IsIndeterminate="True" x:Name="FundSearchProgressBar" />
-        <GridView x:Name="FundSearchGridView" ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}" Margin="30,10,10,0" SelectionChanged="FundSearchGridView_SelectionChanged">
+        <GridView
+            x:Name="FundSearchGridView"
+            ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
+            Margin="30,10,10,0"
+            SelectionChanged="FundSearchGridView_SelectionChanged">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="repo:MorningstarResponseLine">
                     <Grid ColumnSpacing="10" Margin="10">
@@ -96,6 +99,13 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
-        <Button Margin="30" x:Name="AddFundButton" Click="AddFundButton_Click" IsEnabled="False">Ajouter le fond</Button>
+        <StackPanel Orientation="Horizontal" Margin="20" Spacing="20">
+            <TextBox 
+                x:Name="AverageCostTextBox" 
+                TextChanged="AverageCostTextBox_TextChanged" 
+                IsEnabled="False" 
+                MinWidth="300"/>
+            <Button x:Name="AddFundButton" Click="AddFundButton_Click" IsEnabled="False">Ajouter le fond</Button>
+        </StackPanel>
     </StackPanel>
 </Page>
