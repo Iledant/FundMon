@@ -1,6 +1,8 @@
 ﻿using FundMon.Repository;
+using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FundMon.ViewModel;
 
@@ -42,10 +44,10 @@ public class PortfolioZoomViewModel : Bindable
         return Results.Count;
     }
 
-    public void AddFund(MorningstarResponseLine line)
+    public void AddFund(MorningstarResponseLine line, double averageCost)
     {
         int fundID = Repo.AddFund(line.Name, line.MorningStarID);
-        Repo.AddFundToPortfolio(_portfolio.ID, fundID, 0);
+        Repo.AddFundToPortfolio(_portfolio.ID, fundID, averageCost);
         Performances = Repo.PortfolioPerformance(_portfolio.ID);
     }
 }

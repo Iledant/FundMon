@@ -25,6 +25,8 @@ public class FundPerformance
 
     }
 
+    public double Evolution => LastValue - AverageCost;
+
     public double LastWeekValue { get => FetchValue(7); }
 
     public double LastMonthValue { get => FetchValue(31); }
