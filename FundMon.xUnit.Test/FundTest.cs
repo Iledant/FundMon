@@ -7,8 +7,8 @@ namespace FundMon.xUnit.Test;
 
 public class FundTest
 {
-    private Fund fundTest = new(0, "Fond 1", "MorningStar 1", "Description 1");
-    private Fund fundTestWithHistorical = new(1, "Fond 2", "MorningStar 2", "Description 2", new()
+    private readonly Fund fundTest = new(0, "Fond 1", "MorningStar 1", "Description 1");
+    private readonly Fund fundTestWithHistorical = new(1, "Fond 2", "MorningStar 2", "Description 2", new()
     {
         new DateValue(1.0, new System.DateTime(2022, 1, 1)),
         new DateValue(2.0, new System.DateTime(2022, 2, 3))
