@@ -13,13 +13,13 @@ public class Fund
     public string MorningStarID { get; set; }
     public List<DateValue> Historical { get; internal set; }
 
-    public Fund(int id, string name, string morningStarID = "", string description = "")
+    public Fund(int id, string name, string morningStarID = "", string description = "", List<DateValue> historical = null)
     {
         ID = id;
         Name = name;
         Description = description;
         MorningStarID = morningStarID;
-        Historical = new List<DateValue>();
+        Historical = historical ?? new List<DateValue>();
     }
 
     public Fund(Stream fs)
