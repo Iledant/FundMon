@@ -61,7 +61,7 @@ public static class Repo
         {
             Fund fund = Funds.Find(f => f.ID == ff.FundID);
             if (fund is not null)
-                fundPerformances.Add(new FundPerformance { Fund = fund, AverageCost = ff.AverageCost });
+                fundPerformances.Add(new FundPerformance(fund, ff.AverageCost));
         }
         return fundPerformances;
     }

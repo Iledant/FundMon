@@ -13,6 +13,10 @@ public class Fund
     public string MorningStarID { get; set; }
     public List<DateValue> Historical { get; internal set; }
 
+    public delegate void OnHistoricalChanged();
+
+    public OnHistoricalChanged HistoricalChanged = null;
+
     public Fund(int id, string name, string morningStarID = "", string description = "", List<DateValue> historical = null)
     {
         ID = id;
@@ -72,6 +76,7 @@ public class Fund
                 Historical.Add(value);
             }
             Historical.Sort( (d1, d2) => d1.Date.CompareTo(d2.Date));
+            HistoricalChanged?.Invoke();
         }
     }
 }
