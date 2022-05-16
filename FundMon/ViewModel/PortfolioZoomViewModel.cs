@@ -50,4 +50,9 @@ public class PortfolioZoomViewModel : Bindable
         Repo.AddFundToPortfolio(_portfolio.ID, fundID, averageCost);
         Performances = Repo.PortfolioPerformance(_portfolio.ID);
     }
+
+    public void UpdateAverageCost(int fundID, double averageCost)
+    {
+        Repo.UpdateFundAverageCost(_portfolio.ID, fundID, averageCost);
+    }
 }

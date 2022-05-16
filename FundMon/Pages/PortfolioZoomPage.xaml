@@ -4,108 +4,125 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:FundMon.Pages"
     xmlns:repo="using:FundMon.Repository"
-    xmlns:format="using:FundMon.Helpers"
+    xmlns:controls1="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <StackPanel Orientation="Vertical" Margin="10">
-        <TextBlock Text="Portefeuille" Style="{ThemeResource TitleTextBlockStyle}" x:Name="TitleTextBox"/>
-        <GridView 
-            x:Name="FundGridView"
-            Margin="10,20,10,0" 
-            IsDoubleTapEnabled="True"
-            DoubleTapped="FundGridView_DoubleTapped"
-            SelectionChanged="FundGridView_SelectionChanged"
-            ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}"
-            >
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="repo:FundPerformance">
-                    <StackPanel Orientation="Vertical" Padding="10" Background="{x:Bind format:Formatter.PerfToColor(Evolution)}">
-                        <TextBlock Text="{x:Bind Fund.Name}" Style="{ThemeResource SubtitleTextBlockStyle}" />
-                        <Grid ColumnSpacing="10" >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Button
+                x:Name="BackButton"
+                Click="BackButton_Click"
+                Style="{ThemeResource NavigationBackButtonNormalStyle}"
+                ToolTipService.ToolTip="Liste des portefeuilles"/>
+            <TextBlock Text="Portefeuille" Style="{ThemeResource TitleTextBlockStyle}" x:Name="TitleTextBox"/>
+        </StackPanel>
+
+        <controls1:DataGrid 
+            x:Name="FundDataGrid"
+            AutoGenerateColumns="False" 
+            ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}" 
+            CanUserReorderColumns="False"
+            IsReadOnly="True"
+            MaxHeight="300"
+            VerticalScrollBarVisibility="Auto"
+            SelectionChanged="DataGrid_SelectionChanged">
+            <controls1:DataGrid.Columns>
+                <controls1:DataGridTextColumn Header="Nom" Width="Auto" Binding="{Binding Fund.Name}" />
+                <controls1:DataGridTextColumn Header="PRM" Width="Auto" Binding="{Binding EuroAverageCost}">
+                    <controls1:DataGridTextColumn.CellStyle>
+                        <Style TargetType="controls1:DataGridCell">
+                            <Style.Setters>
+                                <Setter Property="HorizontalContentAlignment" Value="Right"/>
+                            </Style.Setters>
+                        </Style>
+                    </controls1:DataGridTextColumn.CellStyle>
+                </controls1:DataGridTextColumn>
+                <controls1:DataGridTextColumn Header="Dernière" Width="Auto" Binding="{Binding EuroLastValue}" />
+                <controls1:DataGridTextColumn Header="Évolution" Width="Auto" Binding="{Binding EuroEvolution}" />
+                <controls1:DataGridTextColumn Header="-1 sem." Width="Auto" Binding="{Binding EuroLastWeekValue}"  />
+                <controls1:DataGridTextColumn Header="-1 mois" Width="Auto" Binding="{Binding EuroLastMonthValue}" />
+            </controls1:DataGrid.Columns>
+        </controls1:DataGrid>
+
+        <StackPanel Orientation="Horizontal" x:Name="SelectedFundStackPanel" Visibility="Collapsed" Spacing="10" Margin="0,10,0,0">
+            <TextBox x:Name="SelectedFundAverageCostTextBox" Header="PRM" TextChanged="SelectedFundAverageCostTextBox_TextChanged" />
+            <Button x:Name="SelectedFundAverageCostEditButton" Content="Changer" Click="SelectedFundAverageCostEditButton_Click" VerticalAlignment="Bottom" />
+            <Button x:Name="SelectedFundDeleteButton" Content="Supprimer" Click="SelectedFundDeleteButton_Click" VerticalAlignment="Bottom" />
+        </StackPanel>
+        
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Column="0" Grid.RowSpan="3" Background="{ThemeResource ButtonForegroundThemeBrush}"/>
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="10,0,0,0" Grid.Column="1" Grid.Row="0">
+                <TextBox 
+                    x:Name="FundSearchTextBox"
+                    Header="Recherche MorningStar"
+                    TextChanged="FundSearchTextBox_TextChanged"/>
+                <Button
+                    x:Name="FundSearchButton"
+                    Click="FundSearchButton_Click"
+                    IsEnabled="False"
+                    VerticalAlignment="Bottom"
+                    Content="Chercher"/>
+                <ProgressRing Visibility="Collapsed" IsIndeterminate="True" x:Name="FundSearchProgressRing" />
+            </StackPanel>
+
+            <GridView
+                x:Name="FundSearchGridView"
+                Grid.Column="1"
+                Grid.Row="1"
+                ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
+                Margin="30,10,0,0"
+                SelectionChanged="FundSearchGridView_SelectionChanged">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="repo:MorningstarResponseLine">
+                        <Grid ColumnSpacing="10" Padding="10" Background="{ThemeResource ButtonPointerOverBackgroundThemeBrush}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
-                            <TextBlock Text="Coût moyen" Grid.Column="0" Grid.Row="0" Style="{ThemeResource CaptionTextBlockStyle}" />
-                            <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(AverageCost)}" 
-                                        Grid.Column="1" Grid.Row="0" 
-                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                        HorizontalAlignment="Right"/>
-                            <TextBlock Text="Dernière valeur" Grid.Column="0" Grid.Row="1" Style="{ThemeResource CaptionTextBlockStyle}" />
-                            <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastValue)}"
-                                        Grid.Column="1" Grid.Row="1" 
-                                        Style="{ThemeResource CaptionTextBlockStyle}"
-                                        HorizontalAlignment="Right"/>
-                            <TextBlock Text="Semaine dernière" Grid.Column="0" Grid.Row="2" Style="{ThemeResource CaptionTextBlockStyle}" />
-                            <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastWeekValue)}"
-                                        Grid.Column="1" Grid.Row="2" 
-                                        Style="{ThemeResource CaptionTextBlockStyle}" 
-                                        HorizontalAlignment="Right"/>
-                            <TextBlock Text="Mois dernier" Grid.Column="0" Grid.Row="3" Style="{ThemeResource CaptionTextBlockStyle}" />
-                            <TextBlock Text="{x:Bind format:Formatter.PerformanceValueFormatter(LastMonthValue)}"
-                                        Grid.Column="1" Grid.Row="3" 
-                                        Style="{ThemeResource CaptionTextBlockStyle}" 
-                                        HorizontalAlignment="Right"/>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="10" />
+                                <ColumnDefinition Width="Auto" MinWidth="10" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Grid.Row="0" Text="Nom" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind Name}" Grid.Column="1" Grid.Row="0"/>
+                            <TextBlock Grid.Column="0" Grid.Row="1" Text="Catégorie" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind Category}" Grid.Column="1" Grid.Row="1"/>
+                            <TextBlock Grid.Column="0" Grid.Row="2" Text="ID" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
+                            <TextBlock Text="{x:Bind MorningStarID}" Grid.Column="1" Grid.Row="2"/>
                         </Grid>
-                    </StackPanel>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
-
-        <StackPanel Orientation="Horizontal" Spacing="20" Margin="10,0,0,0">
-            <TextBlock Text="Recherche Morningstar" VerticalAlignment="Center"/>
-            <TextBox 
-                x:Name="FundSearchTextBox" 
-                TextChanged="FundSearchTextBox_TextChanged"
-                MinWidth="250"/>
-            <Button x:Name="FundSearchButton" Click="FundSearchButton_Click" IsEnabled="False">Chercher</Button>
-            <ProgressRing Visibility="Collapsed" IsIndeterminate="True" x:Name="FundSearchProgressRing" />
-        </StackPanel>
-
-        <GridView
-            x:Name="FundSearchGridView"
-            ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
-            Margin="30,10,10,0"
-            SelectionChanged="FundSearchGridView_SelectionChanged">
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="repo:MorningstarResponseLine">
-                    <Grid ColumnSpacing="10" Margin="10">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" MinWidth="10" />
-                            <ColumnDefinition Width="Auto" MinWidth="10" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Grid.Row="0" Text="Nom" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind Name}" Grid.Column="1" Grid.Row="0"/>
-                        <TextBlock Grid.Column="0" Grid.Row="1" Text="Catégorie" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind Category}" Grid.Column="1" Grid.Row="1"/>
-                        <TextBlock Grid.Column="0" Grid.Row="2" Text="ID" Style="{ThemeResource BodyStrongTextBlockStyle}"/>
-                        <TextBlock Text="{x:Bind MorningStarID}" Grid.Column="1" Grid.Row="2"/>
-                    </Grid>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
-        <StackPanel Orientation="Horizontal" Margin="20" Spacing="20">
-            <TextBox 
-                x:Name="AverageCostTextBox" 
-                TextChanged="AverageCostTextBox_TextChanged" 
-                IsEnabled="False" 
-                MinWidth="300"/>
-            <Button x:Name="AddFundButton" Click="AddFundButton_Click" IsEnabled="False">Ajouter le fond</Button>
-        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+            <StackPanel 
+                x:Name="AddFundStackPannel"
+                Grid.Column="1" Grid.Row="2" 
+                Orientation="Horizontal" 
+                Margin="30,0,0,0" 
+                Spacing="20" 
+                Visibility="Collapsed">
+                <TextBox 
+                    x:Name="AverageCostTextBox" 
+                    Header="Prix moyen d'achat"
+                    TextChanged="AverageCostTextBox_TextChanged" 
+                    IsEnabled="False"/>
+                <Button x:Name="AddFundButton" Click="AddFundButton_Click" IsEnabled="False" VerticalAlignment="Bottom">Ajouter le fond</Button>
+            </StackPanel>
+        </Grid>
     </StackPanel>
 </Page>
