@@ -132,6 +132,21 @@ public static class Repo
         p.Funds.Add(new FundFigures(fundID, averageCost));
     }
 
+    public static void UpdateFundAverageCost(int portfolioID, int fundID, double newAverageCost)
+    {
+        Portfolio p = Portfolios.Find(p => p.ID == portfolioID);
+
+        if (p is null)
+            return;
+
+        FundFigures f = p.Funds.Find(f => f.FundID == fundID);
+
+        if (f is null)
+            return;
+
+        f.AverageCost = newAverageCost;
+    }
+
     public static void Load(Stream fs)
     {
         ReadAndCheckHeader(fs);

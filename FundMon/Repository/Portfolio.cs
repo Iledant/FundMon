@@ -3,7 +3,7 @@ using System.IO;
 
 namespace FundMon.Repository;
 
-public struct FundFigures
+public class FundFigures
 {
     public int FundID { get; set; }
     public double AverageCost { get; set; }

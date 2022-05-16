@@ -1,11 +1,23 @@
-﻿using System;
+﻿using FundMon.Helpers;
+using FundMon.ViewModel;
+using System;
+using System.Globalization;
 
 namespace FundMon.Repository;
 
-public class FundPerformance
+public class FundPerformance : Bindable
 {
+    private double averageCost;
     public Fund Fund { get; init; }
-    public double AverageCost { get; set; }
+    public double AverageCost {
+        get => averageCost;
+        set
+        {
+            averageCost = value;
+            OnPropertyChanged();
+        }
+    }
+    static readonly CultureInfo culture = new("fr-FR");
 
     private double evolution = double.NaN;
     private double lastWeekValue = double.NaN;
@@ -13,9 +25,16 @@ public class FundPerformance
     private double lastValue = double.NaN;
 
     public double Evolution => evolution;
-    public double LastWeekValue => lastWeekValue;
-    public double LastMonthValue => lastMonthValue;
+    public string PercentageEvolution => Formatter.Percentage(evolution);
+    public string EuroEvolution => Formatter.Currency(evolution);
+    public string GlyphEvolution => Formatter.EvolutionGlyph(evolution);
     public double LastValue => lastValue;
+    public string EuroLastValue => Formatter.Currency(lastValue);
+    public double LastWeekValue => lastWeekValue;
+    public string EuroLastWeekValue => Formatter.Currency(lastWeekValue);
+    public double LastMonthValue => lastMonthValue;
+    public string EuroLastMonthValue => Formatter.Currency(lastMonthValue);
+    public string EuroAverageCost => Formatter.Currency(AverageCost);
 
     public FundPerformance(Fund fund, double averageCost)
     {
@@ -30,7 +49,7 @@ public class FundPerformance
         lastWeekValue = FetchValue(7);
         lastMonthValue = FetchValue(31);
         lastValue = FetchLastValue();
-        evolution = lastValue - AverageCost;
+        evolution = double.IsNaN(lastValue) ? double.NaN : lastValue - AverageCost;
     }
 
     private double FetchValue(int days)
