@@ -1,21 +1,55 @@
-﻿using System;
+﻿using FundMon.ViewModel;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 
 namespace FundMon.Repository;
 
-public class Fund
+public class Fund : Bindable
 {
-    public int ID { get; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string MorningStarID { get; set; }
-    public List<DateValue> Historical { get; internal set; }
-
-    public delegate void OnHistoricalChanged();
-
-    public OnHistoricalChanged HistoricalChanged = null;
+    private int id;
+    private string name;
+    private string description;
+    private string morningStarID;
+    public int ID
+    {
+        get => id;
+        init
+        {
+            id = value;
+            OnPropertyChanged(nameof(ID));
+        }
+    }
+    public string Name
+    {
+        get => name;
+        set
+        {
+            name = value;
+            OnPropertyChanged(nameof(Name));
+        }
+    }
+    public string Description
+    {
+        get => description;
+        set
+        {
+            description = value;
+            OnPropertyChanged(nameof(Description));
+        }
+    }
+    public string MorningStarID
+    {
+        get => morningStarID;
+        set
+        {
+            morningStarID = value;
+            OnPropertyChanged(nameof(MorningStarID));
+        }
+    }
+    public ObservableCollection<DateValue> Historical { get; internal set; }
 
     public Fund(int id, string name, string morningStarID = "", string description = "", List<DateValue> historical = null)
     {
@@ -23,7 +57,7 @@ public class Fund
         Name = name;
         Description = description;
         MorningStarID = morningStarID;
-        Historical = historical ?? new List<DateValue>();
+        Historical = Historical is null ? new ObservableCollection<DateValue>(historical) : new();
     }
 
     public Fund(Stream fs)
@@ -34,17 +68,17 @@ public class Fund
         string description = FileHelper.ReadString(fs);
         string morningStarID = FileHelper.ReadString(fs);
         int historicalCount = FileHelper.ReadInt(fs);
-        List<DateValue> historical = new List<DateValue>();
+        List<DateValue> historical = new();
         for (int i = 0; i < historicalCount; i++)
         {
             historical.Add(new DateValue(fs));
         }
-        
+
         ID = id;
         Name = name;
         Description = description;
         MorningStarID = morningStarID;
-        Historical = historical;
+        Historical = new ObservableCollection<DateValue>(historical);
     }
 
     public void Save(Stream fs)
@@ -62,21 +96,28 @@ public class Fund
 
     public async void FetchHistorical()
     {
-        if (MorningStarID != "")
+        if (MorningStarID == "")
+            return;
+
+        DateTime latestDate = Historical.Max(dv => dv.Date);
+        List<DateValue> historical = await MorningStarHelpers.GetHistoricalFromID(MorningStarID, latestDate);
+        if (historical is null)
+            return;
+        
+        List<DateValue> oldHistorical = Historical.ToList();
+        foreach (DateValue value in historical)
         {
-            DateTime latestDate = Historical.Max(dv => dv.Date);
-            List<DateValue> historical = await MorningStarHelpers.GetHistoricalFromID(MorningStarID,latestDate);
-            if (historical is null)
-                return;
-            foreach (DateValue value in historical)
+            for (int i = 0; i < oldHistorical.Count; i++)
             {
-                DateValue found = Historical.Find(dv => dv.Date == value.Date);
-                if (found is not null)
-                    Historical.Remove(found);
-                Historical.Add(value);
+                if (oldHistorical[i].Date == value.Date)
+                {
+                    oldHistorical.RemoveAt(i);
+                    break;
+                }
             }
-            Historical.Sort( (d1, d2) => d1.Date.CompareTo(d2.Date));
-            HistoricalChanged?.Invoke();
+            oldHistorical.Add(value);
         }
+        oldHistorical.Sort((a, b) => DateTime.Compare(a.Date, b.Date));
+        Historical = new ObservableCollection<DateValue>(oldHistorical);
     }
 }
