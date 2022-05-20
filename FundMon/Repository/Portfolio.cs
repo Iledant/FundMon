@@ -1,62 +1,66 @@
-﻿using System.Collections.Generic;
+﻿using FundMon.ViewModel;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace FundMon.Repository;
 
-public class FundFigures
+public class Portfolio : Bindable
 {
-    public int FundID { get; set; }
-    public double AverageCost { get; set; }
+    private int id;
+    private string name;
+    private string description;
 
-    public void Save(Stream s)
+    public int ID
     {
-        FileHelper.WriteInt(s, FundID);
-        FileHelper.WriteDouble(s, AverageCost);
+        get => id;
+        init
+        {
+            id = value;
+            OnPropertyChanged(nameof(ID));
+        }
     }
-
-    public FundFigures(int fundID, double averageCost)
+    public string Name { 
+        get => name; 
+        set {
+            name = value;
+            OnPropertyChanged(nameof(Name));
+        }
+    }
+    public string Description
     {
-        FundID = fundID;
-        AverageCost = averageCost;
+        get => description;
+        set
+        {
+            description = value;
+            OnPropertyChanged(nameof(Description));
+        }
     }
+    public ObservableCollection<FundPerformance> Funds { get; internal set; }
 
-    public FundFigures(Stream s)
-    {
-        FundID = FileHelper.ReadInt(s);
-        AverageCost = FileHelper.ReadDouble(s);
-    }
-}
-
-public class Portfolio
-{
-    public int ID { get; set; }
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public List<FundFigures> Funds { get; set; }
-
-    public Portfolio(int id, string name, List<FundFigures> funds, string description = "")
+    public Portfolio(int id, string name, List<FundPerformance> funds = null, string description = "")
     {
         ID = id;
         Name = name;
         Description = description;
-        Funds = funds ?? new List<FundFigures>();
+        Funds = funds is null ? new () : new ObservableCollection<FundPerformance>(funds);
     }
 
-    public Portfolio(Stream fs)
+    public Portfolio(Stream fs, List<Fund> fundCollection)
     {
         // Achieve all reading functions that could raise exceptions before modifying members
         int id = FileHelper.ReadInt(fs);
         string name = FileHelper.ReadString(fs);
         string description = FileHelper.ReadString(fs);
         int fundsCount = FileHelper.ReadInt(fs);
-        List<FundFigures> funds = new();
+        List<FundPerformance> funds = new();
         for (int i = 0; i < fundsCount; i++)
-            funds.Add(new FundFigures(fs));
+            funds.Add(new FundPerformance(fs, fundCollection));
 
         ID = id;
         Name = name;
         Description = description;
-        Funds = funds;
+        Funds = new ObservableCollection<FundPerformance>(funds);
     }
 
     public void Save(Stream fs)
@@ -66,7 +70,7 @@ public class Portfolio
         FileHelper.WriteUTF8String(fs, Description);
         FileHelper.WriteInt(fs, (int)Funds.Count);
 
-        foreach (FundFigures f in Funds)
+        foreach (FundPerformance f in Funds)
             f.Save(fs);
     }
 }

@@ -1,28 +1,41 @@
 ﻿using FundMon.Helpers;
 using FundMon.ViewModel;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 
 namespace FundMon.Repository;
 
 public class FundPerformance : Bindable
 {
     private double averageCost;
-    public Fund Fund { get; init; }
-    public double AverageCost {
-        get => averageCost;
-        set
-        {
-            averageCost = value;
-            OnPropertyChanged();
-        }
-    }
-    static readonly CultureInfo culture = new("fr-FR");
-
+    private Fund fund;
     private double evolution = double.NaN;
     private double lastWeekValue = double.NaN;
     private double lastMonthValue = double.NaN;
     private double lastValue = double.NaN;
+
+    public Fund Fund
+    {
+        get => fund;
+        init {
+            fund = value;
+            OnPropertyChanged(nameof(Fund));
+        }
+    }
+
+    public double AverageCost
+    {
+        get => averageCost;
+        set
+        {
+            averageCost = value;
+            ComputeValues();
+            OnPropertyChanged(nameof(AverageCost));
+        }
+    }
 
     public double Evolution => evolution;
     public string PercentageEvolution => Formatter.Percentage(evolution);
@@ -39,17 +52,46 @@ public class FundPerformance : Bindable
     public FundPerformance(Fund fund, double averageCost)
     {
         Fund = fund;
+        fund.Historical.CollectionChanged += Historical_CollectionChanged;
         AverageCost = averageCost;
-        Fund.HistoricalChanged = HistoricalChanged;
-        HistoricalChanged();
+        ComputeValues();
     }
 
-    public void HistoricalChanged()
+    public FundPerformance(Stream s, List<Fund> fundCollection)
+    {
+        int ID = FileHelper.ReadInt(s);
+        for (int i = 0; i< fundCollection.Count; i++)
+        {
+            if (fundCollection[i].ID == ID)
+            {
+                Fund = fundCollection[i];
+                break;
+            }
+        }
+        AverageCost = FileHelper.ReadDouble(s);
+    }
+
+    public void Save(Stream s)
+    {
+        FileHelper.WriteInt(s, Fund.ID);
+        FileHelper.WriteDouble(s, AverageCost);
+    }
+
+    private void Historical_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+    {
+        ComputeValues();
+    }
+
+    private void ComputeValues()
     {
         lastWeekValue = FetchValue(7);
         lastMonthValue = FetchValue(31);
         lastValue = FetchLastValue();
         evolution = double.IsNaN(lastValue) ? double.NaN : lastValue - AverageCost;
+        OnPropertyChanged(nameof(Evolution));
+        OnPropertyChanged(nameof(LastWeekValue));
+        OnPropertyChanged(nameof(LastMonthValue));
+        OnPropertyChanged(nameof(LastValue));
     }
 
     private double FetchValue(int days)
@@ -57,16 +99,34 @@ public class FundPerformance : Bindable
         DateTime now = DateTime.Now;
         if (Fund is null || Fund.Historical is null || Fund.Historical.Count == 0)
             return double.NaN;
-        DateValue exact = Fund.Historical.Find(f => (now - f.Date).Days == days);
-        if (exact is not null)
-            return exact.Value;
-        DateValue further = Fund.Historical.Find(f => (now - f.Date).Days == days + 1);
-        if (further is not null)
-            return further.Value;
-        DateValue further2 = Fund.Historical.Find(f => (now - f.Date).Days == days + 2);
-        if (further2 is not null)
-            return further2.Value;
-        return double.NaN;
+        double exact = double.NaN;
+        double further = double.NaN;
+        double further2 = double.NaN;
+
+        for (int i =0; i<Fund.Historical.Count; i++)
+        {
+            var value = (now - Fund.Historical[i].Date).Days -days;
+
+            if (value == 0)
+            {
+                exact = Fund.Historical[i].Value;
+                break;
+            }
+            if (value == 1)
+            {
+                further = Fund.Historical[i].Value;
+            }
+            if (value == 2)
+            {
+                further2 = Fund.Historical[i].Value;
+                break;
+            }
+        }
+        if (!double.IsNaN(exact))
+            return exact;
+        if (!double.IsNaN(further))
+            return further;
+        return further2;
     }
 
     private double FetchLastValue()
