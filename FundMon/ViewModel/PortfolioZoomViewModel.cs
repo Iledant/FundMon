@@ -1,6 +1,7 @@
 ﻿using FundMon.Repository;
 using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -9,33 +10,13 @@ namespace FundMon.ViewModel;
 public class PortfolioZoomViewModel : Bindable
 {
     private Portfolio _portfolio;
-    private List<FundPerformance> _performances;
-    private List<MorningstarResponseLine> _results;
-
-    public List<FundPerformance> Performances
-    {
-        get => _performances;
-        set
-        {
-            _performances = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public List<MorningstarResponseLine> Results
-    {
-        get => _results;
-        set
-        {
-            _results = value;
-            OnPropertyChanged();
-        }
-    }
+    public ObservableCollection<FundPerformance> Performances;
+    public List<MorningstarResponseLine> Results;
 
     public PortfolioZoomViewModel(Portfolio seletecPortfolio)
     {
         _portfolio = seletecPortfolio;
-        Performances = Repo.PortfolioPerformance(_portfolio.ID);
+        Performances = _portfolio.Funds;
     }
 
     public async Task<int> FetchMorningstarResults(string pattern)
@@ -46,9 +27,8 @@ public class PortfolioZoomViewModel : Bindable
 
     public void AddFund(MorningstarResponseLine line, double averageCost)
     {
-        int fundID = Repo.AddFund(line.Name, line.MorningStarID);
-        Repo.AddFundToPortfolio(_portfolio.ID, fundID, averageCost);
-        Performances = Repo.PortfolioPerformance(_portfolio.ID);
+        Fund fund = Repo.AddFund(line.Name, line.MorningStarID);
+        Repo.AddFundToPortfolio(_portfolio.ID, fund, averageCost);
     }
 
     public void UpdateAverageCost(int fundID, double averageCost)

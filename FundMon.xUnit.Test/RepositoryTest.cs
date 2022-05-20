@@ -85,19 +85,15 @@ public class RepositoryTest
     public void EmptyPortfolioFundsTest()
     {
         Assert.Equal(1, Repo.Portfolios[0].ID);
-        List<Fund> portfolioFunds = Repo.PortfolioFunds(1);
-        Assert.Empty(portfolioFunds);
+        Assert.Empty(Repo.Portfolios[0].Funds);
     }
 
     [Fact,TestPriority(7)]
     public void OneFundPortfolioTest()
     {
-        Assert.Equal(2,Repo.Funds[1].ID);
-        Repo.AddFundToPortfolio(1, 2,2.5);
+        Repo.AddFundToPortfolio(1, Repo.Funds[1], 2.5);
         Assert.Single(Repo.Portfolios[0].Funds);
-        List<Fund> portfolioFunds = Repo.PortfolioFunds(1);
-        Assert.Single(portfolioFunds);
-        Assert.Equal(2,Repo.Portfolios[0].Funds[0].FundID);
+        Assert.Equal(Repo.Funds[1].ID, Repo.Portfolios[0].Funds[0].Fund.ID);
     }
 
     [Fact, TestPriority(8)]

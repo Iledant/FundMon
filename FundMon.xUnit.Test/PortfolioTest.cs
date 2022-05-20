@@ -10,7 +10,7 @@ public class PortfolioTest
     [Fact]
     public void SaveAndLoadTest()
     {
-        Portfolio p = new(1, "Portfolio 1", new List<FundFigures>(), "Description 1");
+        Portfolio p = new(1, "Portfolio 1", new List<FundPerformance>(), "Description 1");
 
         MemoryStream m = new();
         p.Save(m);
@@ -18,7 +18,7 @@ public class PortfolioTest
         m.Flush();
         m.Position = 0;
 
-        Portfolio p2 = new(m);
+        Portfolio p2 = new(m, new List<Fund>());
 
         m.Close();
         Assert.Equal(p.ID, p2.ID);

@@ -119,7 +119,6 @@ public class FundPerformance : Bindable
             if (value == 2)
             {
                 further2 = Fund.Historical[i].Value;
-                break;
             }
         }
         if (!double.IsNaN(exact))

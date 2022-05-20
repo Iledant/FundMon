@@ -34,12 +34,12 @@ public static class Repo
         fs.Flush();
     }
 
-    public static int AddFund(string name, string morningstarID, string description = "")
+    public static Fund AddFund(string name, string morningstarID, string description = "")
     {
         Fund f = new(maxFundID, name, morningstarID, description);
         Funds.Add(f);
         maxFundID++;
-        return maxFundID - 1;
+        return f;
     }
 
     public static void UpdateFund(int fundID, string name, string description)

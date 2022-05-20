@@ -57,7 +57,7 @@ public class Fund : Bindable
         Name = name;
         Description = description;
         MorningStarID = morningStarID;
-        Historical = Historical is null ? new ObservableCollection<DateValue>(historical) : new();
+        Historical = historical is null ? new() : new ObservableCollection<DateValue>(historical);
     }
 
     public Fund(Stream fs)
