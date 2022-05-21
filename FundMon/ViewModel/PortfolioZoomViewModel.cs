@@ -1,17 +1,24 @@
 ﻿using FundMon.Repository;
-using Microsoft.UI.Xaml.Media;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace FundMon.ViewModel;
 
 public class PortfolioZoomViewModel : Bindable
 {
-    private Portfolio _portfolio;
+    private readonly Portfolio _portfolio;
+    private List<MorningstarResponseLine> results;
     public ObservableCollection<FundPerformance> Performances;
-    public List<MorningstarResponseLine> Results;
+
+    public List<MorningstarResponseLine> Results
+    {
+        get => results;
+        set {
+            results = value;
+            OnPropertyChanged();
+        }
+    }
 
     public PortfolioZoomViewModel(Portfolio seletecPortfolio)
     {
@@ -25,9 +32,9 @@ public class PortfolioZoomViewModel : Bindable
         return Results.Count;
     }
 
-    public void AddFund(MorningstarResponseLine line, double averageCost)
+    public async void AddFund(MorningstarResponseLine line, double averageCost)
     {
-        Fund fund = Repo.AddFund(line.Name, line.MorningStarID);
+        Fund fund = await Repo.AddFund(line.Name, line.MorningStarID);
         Repo.AddFundToPortfolio(_portfolio.ID, fund, averageCost);
     }
 

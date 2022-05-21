@@ -6,12 +6,8 @@ namespace FundMon.ViewModel;
 
 public class PortfoliosViewModel : Bindable
 {
-    public ObservableCollection<Portfolio> Portfolios;
+    public ObservableCollection<Portfolio> Portfolios = Repo.Portfolios;
 
-    public PortfoliosViewModel()
-    {
-        Portfolios = Repo.Portfolios;
-    }
     public void AddPortfolio(string name, string description)
     {
         Repo.AddPortfolio(name, description);
