@@ -2,17 +2,9 @@
 using FundMon.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
-using System;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace FundMon.Pages;
 
-/// <summary>
-/// An empty page that can be used on its own or navigated to within a Frame.
-/// </summary>
 public sealed partial class PortfoliosPage : Page
 {
     private PortfoliosViewModel ViewModel;
@@ -22,7 +14,6 @@ public sealed partial class PortfoliosPage : Page
         this.InitializeComponent();
         ViewModel = new();
     }
-
 
     private void AddButton_Click(object sender, RoutedEventArgs e)
     {
@@ -57,9 +48,9 @@ public sealed partial class PortfoliosPage : Page
     {
         if (GridView.SelectedItem is Portfolio)
         {
-            SelectedPortfolio= (Portfolio)GridView.SelectedItem;
+            SelectedPortfolio = (Portfolio)GridView.SelectedItem;
             NameTextBox.Text = SelectedPortfolio.Name;
-            DescriptionTextBox.Text =SelectedPortfolio.Description;
+            DescriptionTextBox.Text = SelectedPortfolio.Description;
             AddButton.Content = "Modifier";
         }
         else
