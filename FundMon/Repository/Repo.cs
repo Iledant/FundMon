@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FundMon.Repository;
 
@@ -34,9 +35,14 @@ public static class Repo
         fs.Flush();
     }
 
-    public static Fund AddFund(string name, string morningstarID, string description = "")
+    public static async Task<Fund> AddFund(string name, string morningstarID, string description = "")
     {
-        Fund f = new(maxFundID, name, morningstarID, description);
+        List<DateValue> values = null;
+        if (morningstarID is not null && morningstarID != "")
+        {
+            values = await MorningStarHelpers.GetHistoricalFromID(morningstarID);
+        }
+        Fund f = new(maxFundID, name, morningstarID, description, values);
         Funds.Add(f);
         maxFundID++;
         return f;
@@ -219,7 +225,8 @@ public static class Repo
     {
         foreach (Fund f in Funds)
         {
-            f.Historical = new ObservableCollection<DateValue>(await MorningStarHelpers.GetHistoricalFromID(f.MorningStarID));
+            var historical = await MorningStarHelpers.GetHistoricalFromID(f.MorningStarID);
+            f.Historical = new ObservableCollection<DateValue>(historical);
         }
     }
 }
