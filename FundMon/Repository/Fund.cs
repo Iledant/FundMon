@@ -1,4 +1,4 @@
-﻿using FundMon.ViewModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,49 +7,27 @@ using System.Linq;
 
 namespace FundMon.Repository;
 
-public class Fund : Bindable
+public partial class Fund : ObservableObject
 {
     private int id;
+
+    [ObservableProperty]
     private string name;
+    
+    [ObservableProperty]
     private string description;
+
+    [ObservableProperty]
     private string morningStarID;
+    
     public int ID
     {
         get => id;
-        init
-        {
-            id = value;
-            OnPropertyChanged(nameof(ID));
-        }
+        init => SetProperty(ref id, value);
     }
-    public string Name
-    {
-        get => name;
-        set
-        {
-            name = value;
-            OnPropertyChanged(nameof(Name));
-        }
-    }
-    public string Description
-    {
-        get => description;
-        set
-        {
-            description = value;
-            OnPropertyChanged(nameof(Description));
-        }
-    }
-    public string MorningStarID
-    {
-        get => morningStarID;
-        set
-        {
-            morningStarID = value;
-            OnPropertyChanged(nameof(MorningStarID));
-        }
-    }
-    public ObservableCollection<DateValue> Historical { get; internal set; }
+
+    [ObservableProperty]
+    private ObservableCollection<DateValue> historical;
 
     public Fund(int id, string name, string morningStarID = "", string description = "", List<DateValue> historical = null)
     {
@@ -57,7 +35,7 @@ public class Fund : Bindable
         Name = name;
         Description = description;
         MorningStarID = morningStarID;
-        Historical = historical is null ? new() : new ObservableCollection<DateValue>(historical);
+        Historical = historical is null ? new() : new(historical);
     }
 
     public Fund(Stream fs)
@@ -89,9 +67,7 @@ public class Fund : Bindable
         FileHelper.WriteUTF8String(fs, MorningStarID);
         FileHelper.WriteInt(fs, Historical.Count);
         foreach (DateValue value in Historical)
-        {
             value.Save(fs);
-        }
     }
 
     public async void FetchHistorical()
