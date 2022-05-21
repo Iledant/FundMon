@@ -26,12 +26,12 @@ public class RepositoryTest
     }
 
     [Fact, TestPriority(2)]
-    public void SaveAndLoadRepoWithFundsTest()
+    public async void SaveAndLoadRepoWithFundsTest()
     {
         m.Position = 0;
 
-        Repo.AddFund("Fond 1", "ID Fond 1", "Description fond 1");
-        Repo.AddFund("Fond 2", "ID Fond 2", "Description fond 2");
+        await Repo.AddFund("Fond 1", "ID Fond 1", "Description fond 1");
+        await Repo.AddFund("Fond 2", "ID Fond 2", "Description fond 2");
 
         Repo.Save(m);
 
