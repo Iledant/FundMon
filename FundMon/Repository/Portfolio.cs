@@ -1,49 +1,39 @@
-﻿using FundMon.ViewModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 
 namespace FundMon.Repository;
 
-public class Portfolio : Bindable
+public partial class Portfolio : ObservableObject
 {
     private int id;
+
+    [ObservableProperty]
     private string name;
+    
+    [ObservableProperty]
     private string description;
 
     public int ID
     {
         get => id;
-        init
-        {
-            id = value;
-            OnPropertyChanged(nameof(ID));
-        }
+        init => SetProperty(ref id, value);
     }
-    public string Name { 
-        get => name; 
-        set {
-            name = value;
-            OnPropertyChanged(nameof(Name));
-        }
-    }
-    public string Description
-    {
-        get => description;
-        set
-        {
-            description = value;
-            OnPropertyChanged(nameof(Description));
-        }
-    }
-    public ObservableCollection<FundPerformance> Funds { get; internal set; }
 
-    public Portfolio(int id, string name, List<FundPerformance> funds = null, string description = "")
+    private ObservableCollection<FundPerformance> funds;
+
+    public ObservableCollection<FundPerformance> Funds { 
+        get => funds; 
+        internal set => SetProperty(ref funds, value); 
+    }
+
+    public Portfolio(int id, string name, List<FundPerformance> fundPerformances = null, string description = "")
     {
         ID = id;
         Name = name;
         Description = description;
-        Funds = funds is null ? new () : new ObservableCollection<FundPerformance>(funds);
+        Funds = fundPerformances is null ? new () : new ObservableCollection<FundPerformance>(fundPerformances);
     }
 
     public Portfolio(Stream fs, List<Fund> fundCollection)
@@ -53,14 +43,14 @@ public class Portfolio : Bindable
         string name = FileHelper.ReadString(fs);
         string description = FileHelper.ReadString(fs);
         int fundsCount = FileHelper.ReadInt(fs);
-        List<FundPerformance> funds = new();
+        List<FundPerformance> readFunds = new();
         for (int i = 0; i < fundsCount; i++)
-            funds.Add(new FundPerformance(fs, fundCollection));
+            readFunds.Add(new FundPerformance(fs, fundCollection));
 
         ID = id;
         Name = name;
         Description = description;
-        Funds = new ObservableCollection<FundPerformance>(funds);
+        Funds = new ObservableCollection<FundPerformance>(readFunds);
     }
 
     public void Save(Stream fs)
