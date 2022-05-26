@@ -14,6 +14,7 @@
     <Page.Resources>
         <converter:FrenchDoubleConverter x:Key="doubleConverter" />
         <converter:CurrencyDisplayConverter x:Key="currencyConverter" />
+        <converter:PercentageDisplayConverter x:Key="percentageConverter" />
         <Style x:Key="rightAlignCellStyle" TargetType="controls1:DataGridCell">
             <Style.Setters>
                 <Setter Property="HorizontalContentAlignment" Value="Right" />
@@ -53,6 +54,11 @@
                     Binding="{Binding AverageCost, Mode=TwoWay, Converter={StaticResource doubleConverter}}"
                     CellStyle="{StaticResource rightAlignCellStyle}"
                     Header="PRM" />
+                <controls1:DataGridTextColumn
+                    Width="Auto"
+                    Binding="{Binding Evolution, Mode=OneWay, Converter={StaticResource percentageConverter}}"
+                    CellStyle="{StaticResource rightAlignCellStyle}"
+                    Header="Évolution" />
                 <controls1:DataGridTextColumn
                     Width="Auto"
                     Binding="{Binding LastValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"

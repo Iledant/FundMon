@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace FundMon.Converters;
 
-public class CurrencyDisplayConverter : IValueConverter
+public class PercentageDisplayConverter : IValueConverter
 {
     private static readonly CultureInfo ci = new("fr-FR");
 
@@ -14,7 +14,7 @@ public class CurrencyDisplayConverter : IValueConverter
         {
             if (double.IsNaN(doubleValue))
                 return "-";
-            return doubleValue.ToString("C", ci);
+            return doubleValue.ToString("P2", ci);
         }
         return value;
     }

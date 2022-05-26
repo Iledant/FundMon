@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using FundMon.Helpers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,16 +30,9 @@ public partial class FundPerformance : ObservableObject, IEditableObject
     }
 
     public double Evolution => evolution;
-    public string PercentageEvolution => Formatter.Percentage(evolution);
-    public string EuroEvolution => Formatter.Currency(evolution);
-    public string GlyphEvolution => Formatter.EvolutionGlyph(evolution);
     public double LastValue => lastValue;
-    public string EuroLastValue => Formatter.Currency(lastValue);
     public double LastWeekValue => lastWeekValue;
-    public string EuroLastWeekValue => Formatter.Currency(lastWeekValue);
     public double LastMonthValue => lastMonthValue;
-    public string EuroLastMonthValue => Formatter.Currency(lastMonthValue);
-    public string EuroAverageCost => Formatter.Currency(AverageCost);
 
     public FundPerformance(Fund fund, double averageCost)
     {
@@ -80,7 +72,7 @@ public partial class FundPerformance : ObservableObject, IEditableObject
         lastWeekValue = FetchValue(7);
         lastMonthValue = FetchValue(31);
         lastValue = FetchLastValue();
-        evolution = double.IsNaN(lastValue) ? double.NaN : lastValue - AverageCost;
+        evolution = double.IsNaN(lastValue) || double.IsNaN(averageCost) || averageCost == 0 ? double.NaN : (lastValue - AverageCost)/AverageCost;
         OnPropertyChanged(nameof(Evolution));
         OnPropertyChanged(nameof(LastWeekValue));
         OnPropertyChanged(nameof(LastMonthValue));
@@ -157,8 +149,6 @@ public partial class FundPerformance : ObservableObject, IEditableObject
     public void EndEdit()
     {
         if (inTransaction)
-        {
             inTransaction = false;
-        }
     }
 }
