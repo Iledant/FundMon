@@ -1,30 +1,23 @@
-﻿using FundMon.Helpers;
-using FundMon.ViewModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using FundMon.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
+using System.ComponentModel;
 using System.IO;
 
 namespace FundMon.Repository;
 
-public class FundPerformance : Bindable
+public partial class FundPerformance : ObservableObject, IEditableObject
 {
     private double averageCost;
+    [ObservableProperty]
     private Fund fund;
+    private bool inTransaction = false;
+    private double backupAverageCost;
     private double evolution = double.NaN;
     private double lastWeekValue = double.NaN;
     private double lastMonthValue = double.NaN;
     private double lastValue = double.NaN;
-
-    public Fund Fund
-    {
-        get => fund;
-        init {
-            fund = value;
-            OnPropertyChanged(nameof(Fund));
-        }
-    }
 
     public double AverageCost
     {
@@ -33,7 +26,7 @@ public class FundPerformance : Bindable
         {
             averageCost = value;
             ComputeValues();
-            OnPropertyChanged(nameof(AverageCost));
+            SetProperty(ref averageCost, value);
         }
     }
 
@@ -60,7 +53,7 @@ public class FundPerformance : Bindable
     public FundPerformance(Stream s, List<Fund> fundCollection)
     {
         int ID = FileHelper.ReadInt(s);
-        for (int i = 0; i< fundCollection.Count; i++)
+        for (int i = 0; i < fundCollection.Count; i++)
         {
             if (fundCollection[i].ID == ID)
             {
@@ -103,9 +96,9 @@ public class FundPerformance : Bindable
         double further = double.NaN;
         double further2 = double.NaN;
 
-        for (int i =0; i<Fund.Historical.Count; i++)
+        for (int i = 0; i < Fund.Historical.Count; i++)
         {
-            var value = (now - Fund.Historical[i].Date).Days -days;
+            var value = (now - Fund.Historical[i].Date).Days - days;
 
             if (value == 0)
             {
@@ -141,5 +134,31 @@ public class FundPerformance : Bindable
                 dateTime = Fund.Historical[i].Date;
             }
         return value;
+    }
+
+    public void BeginEdit()
+    {
+        if (!inTransaction)
+        {
+            inTransaction = true;
+            backupAverageCost = averageCost;
+        }
+    }
+
+    public void CancelEdit()
+    {
+        if (inTransaction)
+        {
+            inTransaction = false;
+            averageCost = backupAverageCost;
+        }
+    }
+
+    public void EndEdit()
+    {
+        if (inTransaction)
+        {
+            inTransaction = false;
+        }
     }
 }

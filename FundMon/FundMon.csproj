@@ -13,6 +13,7 @@
     <DefaultLanguage>fr-FR</DefaultLanguage>
     <PackageCertificateThumbprint>614EA46CEA717DE8170F8F74B44F97596F92E173</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <NeutralLanguage>fr-FR</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Pages\PortfoliosPage.xaml" />

@@ -7,11 +7,11 @@ namespace FundMon.Pages;
 
 public sealed partial class PortfoliosPage : Page
 {
-    private PortfoliosViewModel ViewModel;
+    private readonly PortfoliosViewModel ViewModel;
     private Portfolio SelectedPortfolio = null;
     public PortfoliosPage()
     {
-        this.InitializeComponent();
+        InitializeComponent();
         ViewModel = new();
     }
 
@@ -46,9 +46,9 @@ public sealed partial class PortfoliosPage : Page
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (GridView.SelectedItem is Portfolio)
+        if (GridView.SelectedItem is Portfolio portfolio)
         {
-            SelectedPortfolio = (Portfolio)GridView.SelectedItem;
+            SelectedPortfolio = portfolio;
             NameTextBox.Text = SelectedPortfolio.Name;
             DescriptionTextBox.Text = SelectedPortfolio.Description;
             AddButton.Content = "Modifier";
