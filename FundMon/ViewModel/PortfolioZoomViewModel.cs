@@ -1,24 +1,18 @@
-﻿using FundMon.Repository;
-using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using FundMon.Repository;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace FundMon.ViewModel;
 
-public class PortfolioZoomViewModel : Bindable
+public partial class PortfolioZoomViewModel : ObservableObject
 {
     private readonly Portfolio _portfolio;
-    private List<MorningstarResponseLine> results;
-    public ObservableCollection<FundPerformance> Performances;
 
-    public List<MorningstarResponseLine> Results
-    {
-        get => results;
-        set {
-            results = value;
-            OnPropertyChanged();
-        }
-    }
+    [ObservableProperty]
+    private ObservableCollection<MorningstarResponseLine> results;
+
+    public ObservableCollection<FundPerformance> Performances;
 
     public PortfolioZoomViewModel(Portfolio seletecPortfolio)
     {
@@ -28,7 +22,7 @@ public class PortfolioZoomViewModel : Bindable
 
     public async Task<int> FetchMorningstarResults(string pattern)
     {
-        Results = await MorningStarHelpers.FetchFunds(pattern);
+        Results = new ObservableCollection<MorningstarResponseLine>(await MorningStarHelpers.FetchFunds(pattern));
         return Results.Count;
     }
 
@@ -41,5 +35,10 @@ public class PortfolioZoomViewModel : Bindable
     public void UpdateAverageCost(int fundID, double averageCost)
     {
         Repo.UpdateFundAverageCost(_portfolio.ID, fundID, averageCost);
+    }
+
+    public void RemoveFund(FundPerformance fund)
+    {
+        _portfolio.RemoveFund(fund);
     }
 }

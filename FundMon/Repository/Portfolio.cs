@@ -63,4 +63,19 @@ public partial class Portfolio : ObservableObject
         foreach (FundPerformance f in Funds)
             f.Save(fs);
     }
+
+    public void RemoveFund(FundPerformance fund)
+    {
+        if (fund is null)
+            return;
+
+        for (int i = 0; i< Funds.Count; i++)
+        {
+            if (Funds[i].Fund.ID == fund.Fund.ID && Funds[i].AverageCost == fund.AverageCost)
+            {
+                Funds.RemoveAt(i);
+                return;
+            }
+        }
+    }
 }
