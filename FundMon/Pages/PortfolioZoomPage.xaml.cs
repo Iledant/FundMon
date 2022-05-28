@@ -91,11 +91,6 @@ public sealed partial class PortfolioZoomPage : Page
             this.Frame.Navigate(typeof(PortfoliosPage));
     }
 
-    private void SelectedFundAverageCostEditButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        Repo.UpdateFundAverageCost(SelectedPortfolio.ID, selectedFundPerformance.Fund.ID, averageCost);
-    }
-
     private void MenuFlyoutDeleteItem_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         if (sender is MenuFlyoutItem item && item.DataContext is FundPerformance fund)

@@ -43,8 +43,9 @@ internal static class MorningStarHelpers
 {
     private readonly static HttpClient _client = new();
     private readonly static NumberFormatInfo _numberFormat = new CultureInfo("en-US").NumberFormat;
+    private readonly static string[] filteredCategories = { "PEA", "Fonds", "Actions" };
 
-    public static async Task<List<DateValue>> GetHistoricalFromID(string MorningStarID, DateTime? beginDate = null, DateTime? endDate = null)
+public static async Task<List<DateValue>> GetHistoricalFromID(string MorningStarID, DateTime? beginDate = null, DateTime? endDate = null)
     {
         string endPattern = (endDate ?? DateTime.Now).ToString("yyyy-MM-dd");
         string beginPattern = (beginDate ?? new DateTime(1991, 11, 29)).ToString("yyyy-MM-dd");
@@ -91,29 +92,42 @@ internal static class MorningStarHelpers
             int left = fields[1].IndexOf("\"i\":\"") + 5;
             int right = fields[1].IndexOf("\",\"");
             if (left == -1 || right == -1 || right <= left)
-            {
                 continue;
-            }
-            pickStocks.Add(new MorningstarResponseLine
+
+            string category = fields[5].Trim(charToStrim);
+
+            for (int i = 0; i < filteredCategories.Length; i++)
             {
-                Name = fields[0].Trim(charToStrim),
-                MorningStarID = fields[1].Substring(left, right - left),
-                Category = fields[5].Trim(charToStrim),
-                Place = fields[4].Trim(charToStrim),
-                Abbreviation = fields[3].Trim(charToStrim)
-            });
+                if (category == filteredCategories[i])
+                {
+                    pickStocks.Add(new MorningstarResponseLine
+                    {
+                        Name = fields[0].Trim(charToStrim),
+                        MorningStarID = fields[1].Substring(left, right - left),
+                        Category = category,
+                        Place = fields[4].Trim(charToStrim),
+                        Abbreviation = fields[3].Trim(charToStrim)
+                    });
+                    break;
+                }
+            }
         }
         return pickStocks;
     }
 
     public static async Task<List<MorningstarResponseLine>> FetchFunds(string pattern)
     {
-        string url = $"https://www.morningstar.fr/fr/util/SecuritySearch.ashx?" +
-            $"ifIncludeAds=False&q={pattern}&limit=100";
+        string url = "https://www.morningstar.fr/fr/util/SecuritySearch.ashx?source=nav&moduleId=6&ifIncludeAds=False&usrtType=v";
+        FormUrlEncodedContent formContent = new (new[]
+        {
+            new KeyValuePair<string, string>("q", pattern),
+            new KeyValuePair<string, string>("limit", "100")
+        });
 
         try
         {
-            HttpResponseMessage response = await _client.GetAsync(url);
+
+            HttpResponseMessage response = await _client.PostAsync(url, formContent);
             string content = await response.Content.ReadAsStringAsync();
             return ParseMorningstarResponse(content);
         }

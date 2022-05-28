@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using FundMon.Repository;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -22,7 +23,8 @@ public partial class PortfolioZoomViewModel : ObservableObject
 
     public async Task<int> FetchMorningstarResults(string pattern)
     {
-        Results = new ObservableCollection<MorningstarResponseLine>(await MorningStarHelpers.FetchFunds(pattern));
+        List<MorningstarResponseLine> funds = await MorningStarHelpers.FetchFunds(pattern);
+        Results = new ObservableCollection<MorningstarResponseLine>(funds);
         return Results.Count;
     }
 
