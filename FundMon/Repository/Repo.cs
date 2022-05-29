@@ -21,7 +21,7 @@ public static class Repo
         fs.Flush();
         fs.SetLength(0);
         fs.Position = 0;
-        byte[] headerBytes = UTF8Encoding.UTF8.GetBytes(Header);
+        byte[] headerBytes = Encoding.UTF8.GetBytes(Header);
         fs.Write(headerBytes, 0, headerBytes.Length);
 
         FileHelper.WriteInt(fs, Funds.Count);

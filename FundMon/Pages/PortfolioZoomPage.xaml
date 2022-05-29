@@ -44,6 +44,7 @@
             CanUserReorderColumns="False"
             GridLinesVisibility="All"
             ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}"
+            Sorting="FundDataGrid_Sorting"
             VerticalScrollBarVisibility="Auto">
             <controls1:DataGrid.RowStyle>
                 <Style TargetType="controls1:DataGridRow">
@@ -70,47 +71,55 @@
                 <controls1:DataGridTextColumn
                     Width="Auto"
                     Binding="{Binding Fund.Name}"
+                    CanUserSort="False"
                     Header="Nom"
-                    IsReadOnly="True" />
+                    IsReadOnly="True"
+                    Tag="Name" />
                 <controls1:DataGridTextColumn
                     Width="Auto"
                     Binding="{Binding AverageCost, Mode=TwoWay, Converter={StaticResource doubleConverter}}"
+                    CanUserSort="True"
                     CellStyle="{StaticResource rightAlignCellStyle}"
-                    Header="PRM" />
-                <controls1:DataGridTextColumn
-                    Width="Auto"
-                    Binding="{Binding Evolution, Mode=OneWay, Converter={StaticResource percentageConverter}}"
-                    CellStyle="{StaticResource rightAlignCellStyle}"
-                    Header="Évolution" />
+                    Header="PRM"
+                    Tag="AverageCost" />
                 <controls1:DataGridTextColumn
                     Width="Auto"
                     Binding="{Binding LastValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
+                    CanUserSort="True"
                     CellStyle="{StaticResource rightAlignCellStyle}"
                     Header="Dernière"
-                    IsReadOnly="True" />
+                    IsReadOnly="True"
+                    Tag="LastValue" />
                 <controls1:DataGridTextColumn
                     Width="Auto"
-                    Binding="{Binding Evolution, Mode=OneWay, Converter={StaticResource currencyConverter}}"
+                    Binding="{Binding Evolution, Mode=OneWay, Converter={StaticResource percentageConverter}}"
+                    CanUserSort="True"
                     CellStyle="{StaticResource rightAlignCellStyle}"
                     Header="Évolution"
-                    IsReadOnly="True" />
+                    IsReadOnly="True"
+                    Tag="Evolution" />
                 <controls1:DataGridTextColumn
                     Width="Auto"
                     Binding="{Binding LastWeekValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
+                    CanUserSort="True"
                     CellStyle="{StaticResource rightAlignCellStyle}"
                     Header="-1 sem."
-                    IsReadOnly="True" />
+                    IsReadOnly="True"
+                    Tag="LastWeekValue" />
                 <controls1:DataGridTextColumn
                     Width="Auto"
                     Binding="{Binding LastMonthValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
+                    CanUserSort="True"
                     CellStyle="{StaticResource rightAlignCellStyle}"
                     Header="-1 mois"
-                    IsReadOnly="True" />
+                    IsReadOnly="True"
+                    Tag="LastMonthValue" />
             </controls1:DataGrid.Columns>
         </controls1:DataGrid>
 
         <AppBarButton
             x:Name="AddFundAppBarButton"
+            Margin="10,0,0,0"
             Click="AddFundAppBarButton_Click"
             Icon="Add"
             Label="Ajouter un fond" />

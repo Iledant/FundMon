@@ -92,10 +92,10 @@ public sealed partial class PortfolioZoomPage : Page
 
     private void BackButton_Click(object sender, RoutedEventArgs e)
     {
-        if (this.Frame.CanGoBack)
-            this.Frame.GoBack();
+        if (Frame.CanGoBack)
+            Frame.GoBack();
         else
-            this.Frame.Navigate(typeof(PortfoliosPage));
+            Frame.Navigate(typeof(PortfoliosPage));
     }
 
     private void MenuFlyoutDeleteItem_Click(object sender, RoutedEventArgs e)
@@ -112,5 +112,26 @@ public sealed partial class PortfolioZoomPage : Page
     private void AddFundAppBarButton_Click(object sender, RoutedEventArgs e)
     {
         FundSearchGrid.Visibility = Visibility.Visible;
+    }
+
+    private void FundDataGrid_Sorting(object sender, CommunityToolkit.WinUI.UI.Controls.DataGridColumnEventArgs e)
+    {
+        string tag = e.Column.Tag.ToString();
+
+        try
+        {
+            PortfolioZoomViewModel.ColumnTag columnTag = (PortfolioZoomViewModel.ColumnTag)Enum.Parse(typeof(PortfolioZoomViewModel.ColumnTag), tag);
+            e.Column.SortDirection = ViewModel.SortFunds(columnTag);
+            foreach (CommunityToolkit.WinUI.UI.Controls.DataGridColumn column in FundDataGrid.Columns)
+            {
+                if (column.Tag != e.Column.Tag)
+                    column.SortDirection = null;
+            }
+        }
+        catch (Exception)
+        {
+
+        }
+        
     }
 }
