@@ -7,8 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:FundMon.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prim="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
     xmlns:repo="using:FundMon.Repository"
-    xmlns:wctprimitives="using:CommunityToolkit.WinUI.UI.Controls.Primitives"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
@@ -42,6 +42,7 @@
             Margin="10,20,10,0"
             AutoGenerateColumns="False"
             CanUserReorderColumns="False"
+            GridLinesVisibility="All"
             ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}"
             VerticalScrollBarVisibility="Auto">
             <controls1:DataGrid.RowStyle>
@@ -58,6 +59,13 @@
                     </Setter>
                 </Style>
             </controls1:DataGrid.RowStyle>
+            <controls1:DataGrid.ColumnHeaderStyle>
+                <Style TargetType="prim:DataGridColumnHeader">
+                    <Setter Property="HorizontalContentAlignment" Value="Center" />
+                    <Setter Property="FontSize" Value="15" />
+                </Style>
+            </controls1:DataGrid.ColumnHeaderStyle>
+
             <controls1:DataGrid.Columns>
                 <controls1:DataGridTextColumn
                     Width="Auto"
@@ -101,9 +109,21 @@
             </controls1:DataGrid.Columns>
         </controls1:DataGrid>
 
-        <Grid Margin="10">
+        <AppBarButton
+            x:Name="AddFundAppBarButton"
+            Click="AddFundAppBarButton_Click"
+            Icon="Add"
+            Label="Ajouter un fond" />
+
+        <Grid
+            x:Name="FundSearchGrid"
+            Margin="10,20,0,0"
+            ColumnSpacing="10"
+            RowSpacing="20"
+            Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -116,15 +136,33 @@
                 Grid.RowSpan="3"
                 Grid.Column="0"
                 Background="{ThemeResource ButtonForegroundThemeBrush}" />
-            <StackPanel
+
+            <Grid
+                x:Name="StepOneGrid"
                 Grid.Row="0"
                 Grid.Column="1"
-                Margin="10,0,0,0"
+                VerticalAlignment="Top">
+                <Ellipse
+                    Width="18"
+                    Height="18"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Stroke="{ThemeResource ButtonForegroundThemeBrush}"
+                    StrokeThickness="1" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="1" />
+            </Grid>
+
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="2"
                 Orientation="Horizontal"
                 Spacing="10">
                 <TextBox
                     x:Name="FundSearchTextBox"
-                    Header="Recherche MorningStar"
+                    Header="Recherche sur MorningStar"
                     TextChanged="FundSearchTextBox_TextChanged">
                     <TextBox.KeyboardAccelerators>
                         <KeyboardAccelerator Key="Enter" Invoked="SearchAccelerator_Invoked" />
@@ -142,13 +180,32 @@
                     Visibility="Collapsed" />
             </StackPanel>
 
+            <Grid
+                x:Name="StepTwoGrid"
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Top"
+                Visibility="Collapsed">
+                <Ellipse
+                    Width="18"
+                    Height="18"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Stroke="{ThemeResource ButtonForegroundThemeBrush}"
+                    StrokeThickness="1" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="2" />
+            </Grid>
+
             <GridView
                 x:Name="FundSearchGridView"
                 Grid.Row="1"
-                Grid.Column="1"
-                Margin="30,10,0,0"
+                Grid.Column="2"
                 ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
-                SelectionChanged="FundSearchGridView_SelectionChanged">
+                SelectionChanged="FundSearchGridView_SelectionChanged"
+                Visibility="Collapsed">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="repo:MorningstarResponseLine">
                         <Grid
@@ -197,13 +254,31 @@
                     </DataTemplate>
                 </GridView.ItemTemplate>
             </GridView>
+
+            <Grid
+                x:Name="StepThreeGrid"
+                Grid.Row="2"
+                Grid.Column="1"
+                VerticalAlignment="Top"
+                Visibility="Collapsed">
+                <Ellipse
+                    Width="18"
+                    Height="18"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Stroke="{ThemeResource ButtonForegroundThemeBrush}"
+                    StrokeThickness="1" />
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="3" />
+            </Grid>
             <StackPanel
                 x:Name="AddFundStackPannel"
                 Grid.Row="2"
-                Grid.Column="1"
-                Margin="30,0,0,0"
+                Grid.Column="2"
                 Orientation="Horizontal"
-                Spacing="20"
+                Spacing="10"
                 Visibility="Collapsed">
                 <TextBox
                     x:Name="AverageCostTextBox"
