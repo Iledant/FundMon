@@ -2,6 +2,7 @@
 using FundMon.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using System;
 
 namespace FundMon.Pages;
 
@@ -38,10 +39,8 @@ public sealed partial class PortfoliosPage : Page
 
     private void GridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
     {
-        if (GridView.SelectedItem is Portfolio)
-        {
-            this.Frame.Navigate(typeof(PortfolioZoomPage), GridView.SelectedItem as Portfolio);
-        }
+        if (GridView.SelectedItem is Portfolio portfolio)
+            NavigateToPortfolioZoom(portfolio);
     }
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -60,5 +59,22 @@ public sealed partial class PortfoliosPage : Page
             DescriptionTextBox.Text = "";
             AddButton.Content = "Ajouter";
         }
+    }
+
+    private void MenuFlyoutForward_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item && item.DataContext is Portfolio portfolio)
+            NavigateToPortfolioZoom(portfolio);
+    }
+
+    private void NavigateToPortfolioZoom(Portfolio portfolio)
+    {
+        this.Frame.Navigate(typeof(PortfolioZoomPage), portfolio);
+    }
+
+    private void MenuFlyoutDelete_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item && item.DataContext is Portfolio portfolio)
+            ViewModel.Portfolios.Remove(portfolio);
     }
 }
