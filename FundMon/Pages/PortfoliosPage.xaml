@@ -10,6 +10,13 @@
     Language="fr-FR"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <LinearGradientBrush x:Key="GradientBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0.0" Color="{ThemeResource SystemAccentColorLight2}" />
+            <GradientStop Offset="1.0" Color="{ThemeResource SystemAccentColorLight3}" />
+        </LinearGradientBrush>
+    </Page.Resources>
+
     <StackPanel Margin="10" Orientation="Vertical">
         <TextBlock Style="{ThemeResource TitleTextBlockStyle}">Portefeuilles</TextBlock>
         <GridView
@@ -27,7 +34,7 @@
                             MinWidth="200"
                             MinHeight="90"
                             Padding="10,5,10,5"
-                            Background="{ThemeResource SystemControlBackgroundBaseLowBrush}"
+                            Background="{StaticResource GradientBrush}"
                             RowSpacing="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -62,24 +69,48 @@
             </GridView.ItemTemplate>
         </GridView>
 
-        <Grid Margin="10" ColumnSpacing="10">
+        <StackPanel Orientation="Horizontal">
+
+            <AppBarButton
+                x:Name="AddAppBarButton"
+                Click="AddAppBarButton_Click"
+                Icon="Add"
+                Label="Ajouter un portefeuille" />
+            <AppBarButton
+                x:Name="EditAppBarButton"
+                Click="EditAppBarButton_Click"
+                Icon="Edit"
+                IsEnabled="False"
+                Label="Modifier" />
+        </StackPanel>
+
+        <Grid
+            x:Name="AddEditGrid"
+            Margin="10"
+            ColumnSpacing="10"
+            RowSpacing="10"
+            Visibility="Collapsed">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1" />
+                <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0" Background="{ThemeResource ButtonForegroundThemeBrush}" />
+            <Border Grid.Column="0" Background="{ThemeResource SystemAccentColor}" />
             <TextBox
                 x:Name="NameTextBox"
                 Grid.Column="1"
-                MinWidth="100"
+                MinWidth="150"
                 Header="Nom"
-                TextChanged="NameTextBox_TextChanged" />
+                TextChanged="NameTextBox_TextChanged">
+                <TextBox.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Enter" Invoked="NameTextBoxAccelerator_Invoked" />
+                </TextBox.KeyboardAccelerators>
+            </TextBox>
             <TextBox
                 x:Name="DescriptionTextBox"
                 Grid.Column="2"
-                MinWidth="100"
+                MinWidth="150"
                 Header="Description" />
             <Button
                 x:Name="AddButton"
