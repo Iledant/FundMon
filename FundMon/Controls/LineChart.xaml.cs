@@ -34,6 +34,9 @@ public sealed partial class LineChart : UserControl
     private double _halfDateLabelWidth;
     private TextBlock[] _horizontalLabelTextBoxes;
     private List<DateValue> _averageValues;
+    private double _selectedXPosition;
+    private DateValue _selectedDataValue;
+    private bool _isDown = false;
     #endregion
 
     #region DependencyProperties
@@ -509,7 +512,7 @@ public sealed partial class LineChart : UserControl
 
     }
 
-    private void Box_PointerMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    private void Box_PointerMoved(object sender, PointerRoutedEventArgs e)
     {
         Pointer ptr = e.Pointer;
 
@@ -530,15 +533,15 @@ public sealed partial class LineChart : UserControl
                 DateValue fundData = FindClosest(ticks);
                 LegendText.Text = string.Format("{0:dd/MM/yy}\n{1:F2} €", fundData.Date, fundData.Value);
                 PointerLineLegend.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                double x = HorizontalAxis.X2 - point.Position.X < PointerLineLegend.ActualWidth ? point.Position.X - PointerLineLegend.ActualWidth - 5 : point.Position.X + 5;
+                double x = HorizontalAxis.X2 - point.Position.X < PointerLineLegend.ActualWidth ?
+                    point.Position.X - PointerLineLegend.ActualWidth - 5
+                    : point.Position.X + 5;
                 double y = (_verticalAxisMaxVal - fundData.Value) * _verticalScale + ChartPadding;
                 ValueRectangle.Visibility = Visibility.Visible;
                 Canvas.SetTop(ValueRectangle, y - 6);
                 Canvas.SetLeft(ValueRectangle, (fundData.Date.Ticks - _firstTicks) * _horizontalScale + VerticalAxis.X1 - 6);
                 if (y + PointerLineLegend.ActualHeight > HorizontalAxis.Y1)
-                {
                     y -= PointerLineLegend.ActualHeight + 5;
-                }
                 Canvas.SetTop(PointerLineLegend, y);
                 Canvas.SetLeft(PointerLineLegend, x);
             }
@@ -547,6 +550,20 @@ public sealed partial class LineChart : UserControl
                 PointerLine.Visibility = Visibility.Collapsed;
                 PointerLineLegend.Visibility = Visibility.Collapsed;
                 ValueRectangle.Visibility = Visibility.Collapsed;
+            }
+
+            if (_isDown)
+            {
+                if (point.Position.X < _selectedXPosition)
+                {
+                    Canvas.SetLeft(SelectionRectangle, point.Position.X);
+                    SelectionRectangle.Width = _selectedXPosition - point.Position.X;
+                }
+                else
+                {
+                    Canvas.SetLeft(SelectionRectangle, _selectedXPosition);
+                    SelectionRectangle.Width = point.Position.X - _selectedXPosition;
+                }
             }
         }
 
@@ -579,5 +596,22 @@ public sealed partial class LineChart : UserControl
     {
         GenerateChart();
     }
-#endregion
+    #endregion
+
+    private void Box_PointerPressed(object sender, PointerRoutedEventArgs e)
+    {
+        PointerPoint point = e.GetCurrentPoint(Box);
+        double ticks = (point.Position.X - VerticalAxis.X1) / _horizontalScale + _firstTicks;
+        _selectedDataValue = FindClosest(ticks);
+        _selectedXPosition = point.Position.X;
+        Canvas.SetTop(SelectionRectangle, VerticalAxis.Y2);
+        SelectionRectangle.Visibility = Visibility.Visible;
+        _isDown = true;
+    }
+
+    private void Box_PointerReleased(object sender, PointerRoutedEventArgs e)
+    {
+        _isDown = false;
+        SelectionRectangle.Visibility = Visibility.Collapsed;
+    }
 }

@@ -51,6 +51,11 @@
                     <Setter Property="controls1:DataGridRow.ContextFlyout">
                         <Setter.Value>
                             <MenuFlyout>
+                                <MenuFlyoutItem Click="MenuFlyoutChart_Click" Text="Graphique">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE9D9;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
                                 <MenuFlyoutItem
                                     Click="MenuFlyoutDeleteItem_Click"
                                     Icon="Delete"

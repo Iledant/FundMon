@@ -1,0 +1,48 @@
+﻿<Page
+    x:Class="FundMon.Pages.FundChart"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:FundMon.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FundMon.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <StackPanel Margin="10" Orientation="Vertical">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <Button
+                x:Name="BackButton"
+                Click="BackButton_Click"
+                Style="{ThemeResource NavigationBackButtonNormalStyle}"
+                ToolTipService.ToolTip="Liste des portefeuilles" />
+            <TextBlock
+                x:Name="TitleTextBox"
+                Style="{ThemeResource TitleTextBlockStyle}"
+                Text="Portefeuille" />
+        </StackPanel>
+
+        <controls:LineChart
+            MinHeight="500"
+            AverageCount="{x:Bind ViewModel.AverageCount, Mode=OneWay}"
+            AverageStroke="{ThemeResource ButtonBorderThemeBrush}"
+            AxisStroke="{ThemeResource SystemControlAccentDark1AcrylicElementAccentDark1Brush}"
+            ChartBackground="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            IsAverageEnabled="{x:Bind ViewModel.AverageValuesIsOn, Mode=OneWay}"
+            LegendBackground="{ThemeResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}"
+            Stroke="{ThemeResource SystemColorControlAccentBrush}"
+            Values="{x:Bind ViewModel.Values}" />
+
+        <StackPanel Orientation="Horizontal" Spacing="10">
+            <ToggleSwitch Header="Moyenne mobile" IsOn="{x:Bind ViewModel.AverageValuesIsOn, Mode=TwoWay}" />
+            <Slider
+                Width="200"
+                VerticalAlignment="Bottom"
+                Header="Nombre de jours"
+                IsEnabled="{x:Bind ViewModel.AverageValuesIsOn, Mode=TwoWay}"
+                Maximum="30"
+                Minimum="8"
+                Value="{x:Bind ViewModel.AverageCount, Mode=TwoWay}" />
+        </StackPanel>
+    </StackPanel>
+</Page>

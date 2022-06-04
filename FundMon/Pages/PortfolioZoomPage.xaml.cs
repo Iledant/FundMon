@@ -30,7 +30,7 @@ public sealed partial class PortfolioZoomPage : Page
         }
         else
         {
-            throw new Exception("Portfolio parameters expected");
+            throw new Exception("Portfolio navigation parameter expected");
         }
 
         base.OnNavigatedTo(e);
@@ -132,5 +132,11 @@ public sealed partial class PortfolioZoomPage : Page
 
         }
         
+    }
+
+    private void MenuFlyoutChart_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item && item.DataContext is FundPerformance fund)
+            Frame.Navigate(typeof(FundChart), fund);
     }
 }

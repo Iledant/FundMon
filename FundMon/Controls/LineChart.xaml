@@ -10,6 +10,8 @@
     <Canvas
         x:Name="Box"
         PointerMoved="Box_PointerMoved"
+        PointerPressed="Box_PointerPressed"
+        PointerReleased="Box_PointerReleased"
         SizeChanged="Box_SizeChanged">
         <Polygon x:Name="BackgroundRectangle" Fill="{x:Bind ChartBackground, Mode=OneWay}" />
         <Polyline
@@ -43,6 +45,11 @@
             Height="13"
             Stroke="{x:Bind AxisStroke, Mode=OneWay}"
             StrokeThickness="1"
+            Visibility="Collapsed" />
+        <Rectangle
+            x:Name="SelectionRectangle"
+            Height="20"
+            Fill="{ThemeResource SystemControlAccentDark1AcrylicElementAccentDark1Brush}"
             Visibility="Collapsed" />
     </Canvas>
 </UserControl>
