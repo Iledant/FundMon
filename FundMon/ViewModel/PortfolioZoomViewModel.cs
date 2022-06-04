@@ -1,16 +1,18 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI.Controls;
 using FundMon.Repository;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace FundMon.ViewModel;
 
 public partial class PortfolioZoomViewModel : ObservableObject
 {
-    private readonly Portfolio _portfolio;
+    private Portfolio _portfolio;
     private ColumnTag _previousSortedColumTag = ColumnTag.None;
     private DataGridSortDirection? _previousSortDirection = null;
 
@@ -20,13 +22,18 @@ public partial class PortfolioZoomViewModel : ObservableObject
     [ObservableProperty]
     public ObservableCollection<FundPerformance> performances;
 
-    public enum ColumnTag { None = 0, AverageCost = 1, Evolution = 2, LastValue = 3, LastWeekValue = 4, LastMonthValue = 5 };
-
-    public PortfolioZoomViewModel(Portfolio seletecPortfolio)
+    public Portfolio Portfolio
     {
-        _portfolio = seletecPortfolio;
-        Performances = _portfolio.Funds;
+        get => _portfolio;
+        set
+        {
+            _portfolio = value;
+            OnPropertyChanged(nameof(Portfolio));
+            Performances = _portfolio.Funds;
+        }
     }
+
+    public enum ColumnTag { None = 0, AverageCost = 1, Evolution = 2, LastValue = 3, LastWeekValue = 4, LastMonthValue = 5 };
 
     public async Task<int> FetchMorningstarResults(string pattern)
     {

@@ -12,22 +12,21 @@ namespace FundMon.Pages;
 
 public sealed partial class PortfolioZoomPage : Page
 {
-    private Portfolio SelectedPortfolio = null;
-    private PortfolioZoomViewModel ViewModel = null;
+    private PortfolioZoomViewModel ViewModel;
     static readonly CultureInfo ci = new("fr-FR");
     private double averageCost;
     public PortfolioZoomPage()
     {
         InitializeComponent();
+        ViewModel = new();
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
-        if (e.Parameter is Portfolio)
+        if (e.Parameter is Portfolio selectedPortfolio)
         {
-            SelectedPortfolio = e.Parameter as Portfolio;
-            TitleTextBox.Text = "Portefeuille " + SelectedPortfolio.Name;
-            ViewModel = new(SelectedPortfolio);
+            ViewModel.Portfolio = selectedPortfolio;
+            TitleTextBox.Text = "Portefeuille " + ViewModel.Portfolio.Name;
         }
         else
         {
