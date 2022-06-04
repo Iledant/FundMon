@@ -5,18 +5,21 @@ namespace FundMon.Repository;
 
 public class DateValue
 {
-    public double Value { get; init; }
-    public DateTime Date { get; init; }
+    private readonly DateTime _date;
+    private readonly double _value;
+
+    public double Value { get => _value; }
+    public DateTime Date { get => _date; }
 
     public DateValue(double value, DateTime date)
     {
-        Value = value;
-        Date = date;
+        _value = value;
+        _date = date;
     }
     public DateValue(Stream s)
     {
-        Date = FileHelper.ReadDateTime(s);
-        Value = FileHelper.ReadDouble(s);
+        _date = FileHelper.ReadDateTime(s);
+        _value = FileHelper.ReadDouble(s);
     }
 
     public void Save(Stream s)

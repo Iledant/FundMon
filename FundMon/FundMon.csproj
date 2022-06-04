@@ -16,6 +16,7 @@
     <NeutralLanguage>fr-FR</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Controls\LineChart.xaml" />
     <None Remove="Pages\PortfoliosPage.xaml" />
     <None Remove="Pages\PortfolioZoomPage.xaml" />
   </ItemGroup>
@@ -52,6 +53,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Pages\PortfoliosPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\LineChart.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
