@@ -9,7 +9,10 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
-    <StackPanel Margin="10" Orientation="Vertical">
+    <StackPanel
+        Margin="10"
+        Orientation="Vertical"
+        Spacing="10">
         <StackPanel Orientation="Horizontal" Spacing="10">
             <Button
                 x:Name="BackButton"
@@ -22,27 +25,65 @@
                 Text="Portefeuille" />
         </StackPanel>
 
+        <CommandBar Width="Auto" DefaultLabelPosition="Right">
+            <AppBarElementContainer>
+                <SplitButton ToolTipService.ToolTip="Moyenne">
+                    <SplitButton.Content>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xEAFC;" />
+                    </SplitButton.Content>
+                    <SplitButton.Flyout>
+                        <MenuFlyout Placement="RightEdgeAlignedTop">
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetAverageCountCommand}"
+                                IsChecked="{x:Bind ViewModel.HasNoAverage, Mode=OneWay}"
+                                Text="Sans moyenne">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>0</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetAverageCountCommand}"
+                                IsChecked="{x:Bind ViewModel.Has8DaysAverage, Mode=OneWay}"
+                                Text="8 jours">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>8</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetAverageCountCommand}"
+                                IsChecked="{x:Bind ViewModel.Has15DaysAverage, Mode=OneWay}"
+                                Text="15 jours">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>15</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetAverageCountCommand}"
+                                IsChecked="{x:Bind ViewModel.Has30DaysAverage, Mode=OneWay}"
+                                Text="30 jours">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>30</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                        </MenuFlyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
+            </AppBarElementContainer>
+            <AppBarToggleButton
+                Icon="ZoomIn"
+                IsChecked="{x:Bind ViewModel.IsZoomEnabled, Mode=TwoWay}"
+                Label="Zoom" />
+        </CommandBar>
+
         <controls:LineChart
             MinHeight="500"
             AverageCount="{x:Bind ViewModel.AverageCount, Mode=OneWay}"
             AverageStroke="{ThemeResource ButtonBorderThemeBrush}"
             AxisStroke="{ThemeResource SystemControlAccentDark1AcrylicElementAccentDark1Brush}"
             ChartBackground="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            IsAverageEnabled="{x:Bind ViewModel.AverageValuesIsOn, Mode=OneWay}"
+            IsZoomEnabled="{x:Bind ViewModel.IsZoomEnabled, Mode=OneWay}"
             LegendBackground="{ThemeResource SystemControlAccentAcrylicWindowAccentMediumHighBrush}"
             Stroke="{ThemeResource SystemColorControlAccentBrush}"
             Values="{x:Bind ViewModel.Values}" />
-
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <ToggleSwitch Header="Moyenne mobile" IsOn="{x:Bind ViewModel.AverageValuesIsOn, Mode=TwoWay}" />
-            <Slider
-                Width="200"
-                VerticalAlignment="Bottom"
-                Header="Nombre de jours"
-                IsEnabled="{x:Bind ViewModel.AverageValuesIsOn, Mode=TwoWay}"
-                Maximum="30"
-                Minimum="8"
-                Value="{x:Bind ViewModel.AverageCount, Mode=TwoWay}" />
-        </StackPanel>
     </StackPanel>
 </Page>

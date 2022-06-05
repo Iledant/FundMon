@@ -1,21 +1,37 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FundMon.Repository;
 using System.Collections.Generic;
+using System.Windows.Input;
 
 namespace FundMon.ViewModel;
 
 public partial class FundChartViewmodel : ObservableObject
 {
     private FundPerformance _fund;
-    
+
     [ObservableProperty]
     private List<DateValue> _values;
 
     [ObservableProperty]
-    private bool _averageValuesIsOn = false;
+    [AlsoNotifyChangeFor(nameof(HasNoAverage))]
+    [AlsoNotifyChangeFor(nameof(Has8DaysAverage))]
+    [AlsoNotifyChangeFor(nameof(Has15DaysAverage))]
+    [AlsoNotifyChangeFor(nameof(Has30DaysAverage))]
+    private int _averageCount;
 
     [ObservableProperty]
-    private int _averageCount = 8;
+    private bool _isZoomEnabled = false;
+
+    public bool HasNoAverage => _averageCount == 0;
+
+    public bool Has8DaysAverage => _averageCount == 8;
+
+    public bool Has15DaysAverage => _averageCount == 15;
+
+    public bool Has30DaysAverage => _averageCount == 30;
+
+    public ICommand SetAverageCountCommand;
 
     public FundPerformance Fund
     {
@@ -29,6 +45,12 @@ public partial class FundChartViewmodel : ObservableObject
 
     public FundChartViewmodel()
     {
+        SetAverageCountCommand = new RelayCommand<int>(SetAverageCount);
+        AverageCount = 0;
+    }
 
+    private void SetAverageCount(int days)
+    {
+        AverageCount = days;
     }
 }

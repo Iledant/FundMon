@@ -197,19 +197,6 @@ public sealed partial class LineChart : UserControl
     public static readonly DependencyProperty InnerMarginProperty =
         DependencyProperty.Register(nameof(InnerMargin), typeof(int), typeof(LineChart), new PropertyMetadata(3));
 
-    public bool IsAverageEnabled
-    {
-        get => (bool)GetValue(IsAverageEnabledProperty);
-        set
-        {
-            SetValue(IsAverageEnabledProperty, value);
-            GenerateChart();
-        }
-    }
-
-    public static readonly DependencyProperty IsAverageEnabledProperty =
-        DependencyProperty.Register(nameof(IsAverageEnabled), typeof(bool), typeof(LineChart), new PropertyMetadata(false));
-
     public int AverageCount
     {
         get => (int)GetValue(AverageCountProperty);
@@ -268,7 +255,7 @@ public sealed partial class LineChart : UserControl
         DrawHorizontalTicks();
         DrawHorizontalLabels();
         DrawPolyline();
-        if (IsAverageEnabled)
+        if (AverageCount > 0)
         {
             AverageLine.Visibility = Visibility.Visible;
             DrawAveragePolyline();
