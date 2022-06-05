@@ -223,6 +223,18 @@ public sealed partial class LineChart : UserControl
     public static readonly DependencyProperty AverageCountProperty =
         DependencyProperty.Register(nameof(AverageCount), typeof(int), typeof(LineChart), new PropertyMetadata(5));
 
+    public bool IsZoomEnabled
+    {
+        get =>  (bool)GetValue(IsZoomEnabledProperty);
+        set { 
+            SetValue(IsZoomEnabledProperty, value);
+            CheckZoomState();
+        }
+    }
+
+    public static readonly DependencyProperty IsZoomEnabledProperty =
+        DependencyProperty.Register("IsZoomEnabled", typeof(bool), typeof(LineChart), new PropertyMetadata(false));
+
     #endregion
 
     #region Constructor
@@ -600,6 +612,11 @@ public sealed partial class LineChart : UserControl
 
     private void Box_PointerPressed(object sender, PointerRoutedEventArgs e)
     {
+        e.Handled = true;
+
+        if (!IsZoomEnabled)
+            return;
+
         PointerPoint point = e.GetCurrentPoint(Box);
         double ticks = (point.Position.X - VerticalAxis.X1) / _horizontalScale + _firstTicks;
         _selectedDataValue = FindClosest(ticks);
@@ -611,7 +628,18 @@ public sealed partial class LineChart : UserControl
 
     private void Box_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
+        e.Handled = true;
+        
         _isDown = false;
         SelectionRectangle.Visibility = Visibility.Collapsed;
+    }
+
+    private void CheckZoomState()
+    {
+        if (IsZoomEnabled && _isDown)
+        {
+            _isDown = false;
+            SelectionRectangle.Visibility = Visibility.Collapsed;
+        }
     }
 }
