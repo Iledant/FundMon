@@ -13,6 +13,9 @@ using Windows.UI;
 
 namespace FundMon.Controls;
 
+public record DateSelection(DateTime Begin, DateTime End);
+
+// TODO : add date filter
 public sealed partial class LineChart : UserControl
 {
     #region PrivateMembers
@@ -33,9 +36,10 @@ public sealed partial class LineChart : UserControl
     private Line[] _horizontalAxisTickMarks;
     private double _halfDateLabelWidth;
     private TextBlock[] _horizontalLabelTextBoxes;
+    private List<DateValue> _selectedValues;
     private List<DateValue> _averageValues;
     private double _selectedXPosition;
-    private DateValue _selectedDataValue;
+    private DateValue _firstSelectedDateValue;
     private bool _isDown = false;
     #endregion
 
@@ -212,8 +216,9 @@ public sealed partial class LineChart : UserControl
 
     public bool IsZoomEnabled
     {
-        get =>  (bool)GetValue(IsZoomEnabledProperty);
-        set { 
+        get => (bool)GetValue(IsZoomEnabledProperty);
+        set
+        {
             SetValue(IsZoomEnabledProperty, value);
             CheckZoomState();
         }
@@ -222,6 +227,17 @@ public sealed partial class LineChart : UserControl
     public static readonly DependencyProperty IsZoomEnabledProperty =
         DependencyProperty.Register("IsZoomEnabled", typeof(bool), typeof(LineChart), new PropertyMetadata(false));
 
+    public DateSelection DateSelection
+    {
+        get { return (DateSelection)GetValue(DateSelectionProperty); }
+        set { SetValue(DateSelectionProperty, value); }
+    }
+
+    public static readonly DependencyProperty DateSelectionProperty =
+        DependencyProperty.Register("DateSelection",
+            typeof(DateSelection),
+            typeof(LineChart),
+            new PropertyMetadata(new DateSelection(DateTime.MinValue, DateTime.MaxValue)));
     #endregion
 
     #region Constructor
@@ -241,6 +257,7 @@ public sealed partial class LineChart : UserControl
         if (Values.Count == 0)
             return;
 
+        FetchSelectedValues();
         GetMinMaxVal();
         CalculateVerticalBoundaries();
         CalculateVerticalAxisWidth();
@@ -266,10 +283,23 @@ public sealed partial class LineChart : UserControl
         }
     }
 
+    private void FetchSelectedValues()
+    {
+        if (DateSelection.Begin == DateSelection.End)
+        {
+            _selectedValues = Values;
+        }
+        else
+        {
+            _selectedValues = Values.FindAll(d => d.Date >= DateSelection.Begin && d.Date <= DateSelection.End);
+            _selectedValues.Sort((a, b) => DateTime.Compare(a.Date, b.Date));
+        }
+    }
+
     private void GetMinMaxVal()
     {
-        _minVal = Values.Min(d => d.Value);
-        _maxVal = Values.Max(d => d.Value);
+        _minVal = _selectedValues.Min(d => d.Value);
+        _maxVal = _selectedValues.Max(d => d.Value);
     }
     private void CalculateVerticalBoundaries()
     {
@@ -302,9 +332,11 @@ public sealed partial class LineChart : UserControl
     {
         double digits = Math.Floor(Math.Log10(_verticalAxisMaxVal / 10));
         _verticalAxisTextFormat = "{0:" + ((digits > 0) ? "G0" : $"F{-digits}") + "}";
-        TextBlock tb = new();
-        tb.Text = string.Format(_verticalAxisTextFormat, _verticalAxisMaxVal);
-        tb.FontSize = AxisTextSize;
+        TextBlock tb = new()
+        {
+            Text = string.Format(_verticalAxisTextFormat, _verticalAxisMaxVal),
+            FontSize = AxisTextSize
+        };
         tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         _verticalAxisTextWidth = tb.DesiredSize.Width;
     }
@@ -312,9 +344,9 @@ public sealed partial class LineChart : UserControl
     private void CalculateHorizontalAxisHeight()
     {
         TextBlock tb = new();
-        TimeSpan timeSpan = Values[Values.Count - 1].Date - Values[0].Date;
+        TimeSpan timeSpan = _selectedValues[_selectedValues.Count - 1].Date - _selectedValues[0].Date;
         _horizontalAxisTextFormat = timeSpan.TotalDays > 365 ? "{0:MM/yy}" : "{0:dd/MM/yy}";
-        tb.Text = string.Format("{0:dd/MM/yy}", Values[0].Date);
+        tb.Text = string.Format("{0:dd/MM/yy}", _selectedValues[0].Date);
         tb.FontSize = AxisTextSize;
         tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
         _halfDateLabelWidth = tb.DesiredSize.Width / 2;
@@ -346,14 +378,14 @@ public sealed partial class LineChart : UserControl
 
     private void CalculateHorizontalScale()
     {
-        if (Values.Count == 0)
+        if (_selectedValues.Count == 0)
         {
             _horizontalScale = 1.0;
             return;
         }
 
-        _firstTicks = Values[0].Date.Ticks;
-        _horizontalScale = (Box.ActualWidth - (2 * ChartPadding) - (2 * InnerMargin) - _verticalAxisTextWidth - _halfDateLabelWidth) / (Values[Values.Count - 1].Date.Ticks - _firstTicks);
+        _firstTicks = _selectedValues[0].Date.Ticks;
+        _horizontalScale = (Box.ActualWidth - (2 * ChartPadding) - (2 * InnerMargin) - _verticalAxisTextWidth - _halfDateLabelWidth) / (_selectedValues[_selectedValues.Count - 1].Date.Ticks - _firstTicks);
     }
 
     private void DrawBackground()
@@ -371,7 +403,7 @@ public sealed partial class LineChart : UserControl
     {
         PointCollection points = new();
 
-        foreach (DateValue data in Values)
+        foreach (DateValue data in _selectedValues)
         {
             points.Add(new Point(
                 (int)((data.Date.Ticks - _firstTicks) * _horizontalScale + VerticalAxis.X1),
@@ -387,20 +419,20 @@ public sealed partial class LineChart : UserControl
         _averageValues = new();
         double mean = 1 / ((double)AverageCount);
 
-        if (Values.Count < AverageCount + 1)
+        if (_selectedValues.Count < AverageCount + 1)
             return;
 
-        double stack = Values[0].Value;
+        double stack = _selectedValues[0].Value;
         for (int i = 1; i < AverageCount; i++)
         {
-            stack += Values[i].Value;
+            stack += _selectedValues[i].Value;
         }
-        _averageValues.Add(new(stack * mean, Values[AverageCount - 1].Date));
+        _averageValues.Add(new(stack * mean, _selectedValues[AverageCount - 1].Date));
 
-        for (int i = AverageCount; i < Values.Count; i++)
+        for (int i = AverageCount; i < _selectedValues.Count; i++)
         {
-            stack += Values[i].Value - Values[i - AverageCount].Value;
-            _averageValues.Add(new(stack * mean, Values[i].Date));
+            stack += _selectedValues[i].Value - _selectedValues[i - AverageCount].Value;
+            _averageValues.Add(new(stack * mean, _selectedValues[i].Date));
         }
 
         foreach (DateValue data in _averageValues)
@@ -491,7 +523,7 @@ public sealed partial class LineChart : UserControl
 
     private void DrawHorizontalLabels()
     {
-        long tick = (Values[Values.Count - 1].Date.Ticks - Values[0].Date.Ticks) / 10;
+        long tick = (_selectedValues[_selectedValues.Count - 1].Date.Ticks - _selectedValues[0].Date.Ticks) / 10;
         foreach (TextBlock tb in _horizontalLabelTextBoxes)
         {
             _ = Box.Children.Remove(tb);
@@ -500,7 +532,7 @@ public sealed partial class LineChart : UserControl
         for (int i = 0; i < 11; i++)
         {
             TextBlock tb = new();
-            tb.Text = string.Format(_horizontalAxisTextFormat, new DateTime(tick * i + Values[0].Date.Ticks));
+            tb.Text = string.Format(_horizontalAxisTextFormat, new DateTime(tick * i + _selectedValues[0].Date.Ticks));
             tb.FontSize = AxisTextSize;
             tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             Box.Children.Add(tb);
@@ -571,24 +603,24 @@ public sealed partial class LineChart : UserControl
 
     private DateValue FindClosest(double ticks)
     {
-        int i = 0, j = Values.Count - 1, k;
+        int i = 0, j = _selectedValues.Count - 1, k;
         double daySpan = TimeSpan.FromDays(1).Ticks;
 
-        while (j - i > 2 && Math.Abs(Values[i].Date.Ticks - ticks) > daySpan)
+        while (j - i > 2 && Math.Abs(_selectedValues[i].Date.Ticks - ticks) > daySpan)
         {
             k = (i + j) / 2;
-            if (Math.Abs(Values[k].Date.Ticks - ticks) < daySpan)
+            if (Math.Abs(_selectedValues[k].Date.Ticks - ticks) < daySpan)
             {
-                return Values[k];
+                return _selectedValues[k];
             }
-            if (Values[k].Date.Ticks > ticks)
+            if (_selectedValues[k].Date.Ticks > ticks)
                 j = k;
             else
                 i = k;
         }
 
-        return (Math.Abs(Values[i].Date.Ticks - ticks) <= Math.Abs(Values[j].Date.Ticks - ticks)) ?
-            Values[i] : Values[j];
+        return (Math.Abs(_selectedValues[i].Date.Ticks - ticks) <= Math.Abs(_selectedValues[j].Date.Ticks - ticks)) ?
+            _selectedValues[i] : _selectedValues[j];
     }
 
     private void Box_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -606,7 +638,7 @@ public sealed partial class LineChart : UserControl
 
         PointerPoint point = e.GetCurrentPoint(Box);
         double ticks = (point.Position.X - VerticalAxis.X1) / _horizontalScale + _firstTicks;
-        _selectedDataValue = FindClosest(ticks);
+        _firstSelectedDateValue = FindClosest(ticks);
         _selectedXPosition = point.Position.X;
         Canvas.SetTop(SelectionRectangle, VerticalAxis.Y2);
         SelectionRectangle.Visibility = Visibility.Visible;
@@ -616,9 +648,24 @@ public sealed partial class LineChart : UserControl
     private void Box_PointerReleased(object sender, PointerRoutedEventArgs e)
     {
         e.Handled = true;
+
+        if (!IsZoomEnabled)
+            return;
+
+        PointerPoint point = e.GetCurrentPoint(Box);
+        double ticks = (point.Position.X - VerticalAxis.X1) / _horizontalScale + _firstTicks;
+        DateValue _secondSelectedDateValue = FindClosest(ticks);
+
+        DateTime begin = _firstSelectedDateValue.Date;
+        DateTime end = _secondSelectedDateValue.Date;
         
+        if (begin>end)
+            (end, begin) = (begin, end);
+
+        DateSelection = new DateSelection(begin,end);
         _isDown = false;
         SelectionRectangle.Visibility = Visibility.Collapsed;
+        GenerateChart();
     }
 
     private void CheckZoomState()

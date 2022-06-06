@@ -73,12 +73,13 @@
                 Icon="ZoomIn"
                 IsChecked="{x:Bind ViewModel.IsZoomEnabled, Mode=TwoWay}"
                 Label="Zoom" />
+            <AppBarButton Icon="ZoomOut" Label="Tout" />
         </CommandBar>
 
         <controls:LineChart
             MinHeight="500"
             AverageCount="{x:Bind ViewModel.AverageCount, Mode=OneWay}"
-            AverageStroke="{ThemeResource ButtonBorderThemeBrush}"
+            AverageStroke="{ThemeResource ButtonForegroundThemeBrush}"
             AxisStroke="{ThemeResource SystemControlAccentDark1AcrylicElementAccentDark1Brush}"
             ChartBackground="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             IsZoomEnabled="{x:Bind ViewModel.IsZoomEnabled, Mode=OneWay}"
