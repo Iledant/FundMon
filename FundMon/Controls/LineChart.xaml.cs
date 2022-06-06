@@ -229,8 +229,11 @@ public sealed partial class LineChart : UserControl
 
     public DateSelection DateSelection
     {
-        get { return (DateSelection)GetValue(DateSelectionProperty); }
-        set { SetValue(DateSelectionProperty, value); }
+        get => (DateSelection)GetValue(DateSelectionProperty);
+        set { 
+            SetValue(DateSelectionProperty, value);
+            GenerateChart();
+        }
     }
 
     public static readonly DependencyProperty DateSelectionProperty =
@@ -662,10 +665,9 @@ public sealed partial class LineChart : UserControl
         if (begin>end)
             (end, begin) = (begin, end);
 
-        DateSelection = new DateSelection(begin,end);
         _isDown = false;
         SelectionRectangle.Visibility = Visibility.Collapsed;
-        GenerateChart();
+        DateSelection = new DateSelection(begin,end);
     }
 
     private void CheckZoomState()
