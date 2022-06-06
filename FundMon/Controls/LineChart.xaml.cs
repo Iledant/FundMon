@@ -15,7 +15,6 @@ namespace FundMon.Controls;
 
 public record DateSelection(DateTime Begin, DateTime End);
 
-// TODO : add date filter
 public sealed partial class LineChart : UserControl
 {
     #region PrivateMembers
