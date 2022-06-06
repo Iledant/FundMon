@@ -13,19 +13,21 @@
         Margin="10"
         Orientation="Vertical"
         Spacing="10">
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button
-                x:Name="BackButton"
-                Click="BackButton_Click"
-                Style="{ThemeResource NavigationBackButtonNormalStyle}"
-                ToolTipService.ToolTip="Liste des portefeuilles" />
-            <TextBlock
-                x:Name="TitleTextBox"
-                Style="{ThemeResource TitleTextBlockStyle}"
-                Text="Portefeuille" />
-        </StackPanel>
 
         <CommandBar Width="Auto" DefaultLabelPosition="Right">
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button
+                        x:Name="BackButton"
+                        Click="BackButton_Click"
+                        Style="{ThemeResource NavigationBackButtonNormalStyle}"
+                        ToolTipService.ToolTip="Liste des portefeuilles" />
+                    <TextBlock
+                        x:Name="TitleTextBox"
+                        Style="{ThemeResource TitleTextBlockStyle}"
+                        Text="Portefeuille" />
+                </StackPanel>
+            </CommandBar.Content>
             <AppBarElementContainer>
                 <SplitButton ToolTipService.ToolTip="Moyenne">
                     <SplitButton.Content>

@@ -29,9 +29,7 @@ public sealed partial class PortfolioZoomPage : Page
             TitleTextBox.Text = "Portefeuille " + ViewModel.Portfolio.Name;
         }
         else
-        {
             throw new Exception("Portfolio navigation parameter expected");
-        }
 
         base.OnNavigatedTo(e);
     }
@@ -63,7 +61,7 @@ public sealed partial class PortfolioZoomPage : Page
         AddFundButton.IsEnabled = false;
         FundSearchGrid.Visibility = Visibility.Collapsed;
         FundSearchGridView.Visibility = Visibility.Collapsed;
-        StepTwoGrid.Visibility=Visibility.Collapsed;
+        StepTwoGrid.Visibility = Visibility.Collapsed;
         StepThreeGrid.Visibility = Visibility.Collapsed;
         AddFundStackPannel.Visibility = Visibility.Collapsed;
     }
@@ -97,17 +95,12 @@ public sealed partial class PortfolioZoomPage : Page
             Frame.Navigate(typeof(PortfoliosPage));
     }
 
-    private void MenuFlyoutDeleteItem_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is MenuFlyoutItem item && item.DataContext is FundPerformance fund)
-            ViewModel.RemoveFund(fund);
-    }
-
     private void SearchAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
     {
         if (FundSearchTextBox.Text != "")
             FundSearchButton_Click(sender, null);
     }
+
     private void AddFundAppBarButton_Click(object sender, RoutedEventArgs e)
     {
         FundSearchGrid.Visibility = Visibility.Visible;
@@ -128,15 +121,18 @@ public sealed partial class PortfolioZoomPage : Page
             }
         }
         catch (Exception)
-        {
-
-        }
-        
+        { }
     }
 
-    private void MenuFlyoutChart_Click(object sender, RoutedEventArgs e)
+    private void RowDeleteButton_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is MenuFlyoutItem item && item.DataContext is FundPerformance fund)
+        if (sender is Button button && button.DataContext is FundPerformance fund)
+            ViewModel.RemoveFund(fund);
+    }
+
+    private void RowShowChart_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button button && button.DataContext is FundPerformance fund)
             Frame.Navigate(typeof(FundChart), fund);
     }
 }

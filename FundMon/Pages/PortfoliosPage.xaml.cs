@@ -88,13 +88,7 @@ public sealed partial class PortfoliosPage : Page
     private void EditAppBarButton_Click(object sender, RoutedEventArgs e)
     {
         if (GridView.SelectedItem is Portfolio portfolio)
-        {
-            SelectedPortfolio = portfolio;
-            NameTextBox.Text = SelectedPortfolio.Name;
-            DescriptionTextBox.Text = SelectedPortfolio.Description;
-            AddButton.Content = "Modifier";
-            AddEditGrid.Visibility = Visibility.Visible;
-        }
+            EditPortfolio(portfolio);
     }
 
     private void AddAppBarButton_Click(object sender, RoutedEventArgs e)
@@ -104,6 +98,21 @@ public sealed partial class PortfoliosPage : Page
         DescriptionTextBox.Text = "";
         AddButton.Content = "Ajouter";
         AddButton.IsEnabled = false;
+        AddEditGrid.Visibility = Visibility.Visible;
+    }
+
+    private void MenuFlyoutEdit_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item && item.DataContext is Portfolio portfolio)
+            EditPortfolio(portfolio);
+    }
+
+    private void EditPortfolio(Portfolio portfolio)
+    {
+        SelectedPortfolio = portfolio;
+        NameTextBox.Text = SelectedPortfolio.Name;
+        DescriptionTextBox.Text = SelectedPortfolio.Description;
+        AddButton.Content = "Modifier";
         AddEditGrid.Visibility = Visibility.Visible;
     }
 }

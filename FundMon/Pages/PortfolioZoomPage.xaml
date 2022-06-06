@@ -24,17 +24,27 @@
     </Page.Resources>
 
     <StackPanel Margin="10" Orientation="Vertical">
-        <StackPanel Orientation="Horizontal" Spacing="10">
-            <Button
-                x:Name="BackButton"
-                Click="BackButton_Click"
-                Style="{ThemeResource NavigationBackButtonNormalStyle}"
-                ToolTipService.ToolTip="Liste des portefeuilles" />
-            <TextBlock
-                x:Name="TitleTextBox"
-                Style="{ThemeResource TitleTextBlockStyle}"
-                Text="Portefeuille" />
-        </StackPanel>
+        <CommandBar Width="Auto" DefaultLabelPosition="Right">
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                    <Button
+                        x:Name="BackButton"
+                        Click="BackButton_Click"
+                        Style="{ThemeResource NavigationBackButtonNormalStyle}"
+                        ToolTipService.ToolTip="Portefeuilles" />
+                    <TextBlock
+                        x:Name="TitleTextBox"
+                        Style="{ThemeResource TitleTextBlockStyle}"
+                        Text="Portefeuille" />
+                </StackPanel>
+            </CommandBar.Content>
+            <AppBarButton
+                x:Name="AddFundAppBarButton"
+                Margin="10,0,0,0"
+                Click="AddFundAppBarButton_Click"
+                Icon="Add"
+                Label="Nouveau" />
+        </CommandBar>
 
         <controls1:DataGrid
             x:Name="FundDataGrid"
@@ -46,25 +56,6 @@
             ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}"
             Sorting="FundDataGrid_Sorting"
             VerticalScrollBarVisibility="Auto">
-            <controls1:DataGrid.RowStyle>
-                <Style TargetType="controls1:DataGridRow">
-                    <Setter Property="controls1:DataGridRow.ContextFlyout">
-                        <Setter.Value>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Click="MenuFlyoutChart_Click" Text="Graphique">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xE9D9;" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                                <MenuFlyoutItem
-                                    Click="MenuFlyoutDeleteItem_Click"
-                                    Icon="Delete"
-                                    Text="Supprimer" />
-                            </MenuFlyout>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </controls1:DataGrid.RowStyle>
             <controls1:DataGrid.ColumnHeaderStyle>
                 <Style TargetType="prim:DataGridColumnHeader">
                     <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -119,15 +110,28 @@
                     Header="-1 mois"
                     IsReadOnly="True"
                     Tag="LastMonthValue" />
+                <controls1:DataGridTemplateColumn Width="Auto">
+                    <controls1:DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Click="RowShowChart_Click" ToolTipService.ToolTip="Graphique de l'historique">
+                                    <FontIcon
+                                        FontFamily="Segoe Fluent Icons"
+                                        FontSize="12"
+                                        Glyph="&#xE9D9;" />
+                                </Button>
+                                <Button Click="RowDeleteButton_Click" ToolTipService.ToolTip="Supprimer">
+                                    <FontIcon
+                                        FontFamily="Segoe Fluent Icons"
+                                        FontSize="12"
+                                        Glyph="&#xE74D;" />
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </controls1:DataGridTemplateColumn.CellTemplate>
+                </controls1:DataGridTemplateColumn>
             </controls1:DataGrid.Columns>
         </controls1:DataGrid>
-
-        <AppBarButton
-            x:Name="AddFundAppBarButton"
-            Margin="10,0,0,0"
-            Click="AddFundAppBarButton_Click"
-            Icon="Add"
-            Label="Ajouter un fond" />
 
         <Grid
             x:Name="FundSearchGrid"
