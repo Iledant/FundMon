@@ -114,16 +114,16 @@
                     <controls1:DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Button Click="RowShowChart_Click" ToolTipService.ToolTip="Graphique de l'historique">
+                                <Button Click="RowShowChart_Click" ToolTipService.ToolTip="Graphique de l'historique" Padding="2">
                                     <FontIcon
                                         FontFamily="Segoe Fluent Icons"
-                                        FontSize="12"
+                                        FontSize="15"
                                         Glyph="&#xE9D9;" />
                                 </Button>
-                                <Button Click="RowDeleteButton_Click" ToolTipService.ToolTip="Supprimer">
+                                <Button Click="RowDeleteButton_Click" ToolTipService.ToolTip="Supprimer" Padding="2">
                                     <FontIcon
                                         FontFamily="Segoe Fluent Icons"
-                                        FontSize="12"
+                                        FontSize="15"
                                         Glyph="&#xE74D;" />
                                 </Button>
                             </StackPanel>
@@ -148,10 +148,11 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Border
-                Grid.RowSpan="3"
+                Grid.RowSpan="4"
                 Grid.Column="0"
                 Background="{ThemeResource ButtonForegroundThemeBrush}" />
 
@@ -228,7 +229,7 @@
                     <DataTemplate x:DataType="repo:MorningstarResponseLine">
                         <Grid
                             Padding="10"
-                            Background="{ThemeResource ButtonPointerOverBackgroundThemeBrush}"
+                            Background="{ThemeResource SystemAccentColorLight3}"
                             ColumnSpacing="10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" MinHeight="50" />
@@ -291,25 +292,22 @@
                     VerticalAlignment="Center"
                     Text="3" />
             </Grid>
-            <StackPanel
-                x:Name="AddFundStackPannel"
-                Grid.Row="2"
-                Grid.Column="2"
-                Orientation="Horizontal"
-                Spacing="10"
-                Visibility="Collapsed">
                 <TextBox
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    MaxWidth="200"
+                    HorizontalAlignment="Left"
                     x:Name="AverageCostTextBox"
                     Header="Prix moyen d'achat"
-                    IsEnabled="False"
+                    Visibility="Collapsed"
                     TextChanged="AverageCostTextBox_TextChanged" />
+            <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" Spacing="10">
                 <Button
                     x:Name="AddFundButton"
-                    VerticalAlignment="Bottom"
                     Click="AddFundButton_Click"
-                    IsEnabled="False">
-                    Ajouter le fond
-                </Button>
+                    Style="{ThemeResource AccentButtonStyle}"
+                    IsEnabled="False" Content="Ajouter le fond"/>
+                <Button x:Name="CancelButton" Click="CancelButton_Click" Content="Annuler" />
             </StackPanel>
         </Grid>
     </StackPanel>

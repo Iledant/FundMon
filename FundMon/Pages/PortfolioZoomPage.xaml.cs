@@ -56,21 +56,24 @@ public sealed partial class PortfolioZoomPage : Page
     {
         MorningstarResponseLine result = FundSearchGridView.SelectedItem as MorningstarResponseLine;
         ViewModel.AddFund(result, averageCost);
+        ResetFundSearchGrid();
+    }
+
+    private void ResetFundSearchGrid()
+    {
         AverageCostTextBox.Text = "";
         FundSearchGridView.SelectedItem = null;
-        AddFundButton.IsEnabled = false;
         FundSearchGrid.Visibility = Visibility.Collapsed;
         FundSearchGridView.Visibility = Visibility.Collapsed;
         StepTwoGrid.Visibility = Visibility.Collapsed;
         StepThreeGrid.Visibility = Visibility.Collapsed;
-        AddFundStackPannel.Visibility = Visibility.Collapsed;
+        AverageCostTextBox.Visibility = Visibility.Collapsed;
     }
 
     private void FundSearchGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         bool fundSelected = FundSearchGridView.SelectedItem != null;
-        AverageCostTextBox.IsEnabled = fundSelected;
-        AddFundStackPannel.Visibility = fundSelected ? Visibility.Visible : Visibility.Collapsed;
+        AverageCostTextBox.Visibility = fundSelected ? Visibility.Visible : Visibility.Collapsed;
         StepThreeGrid.Visibility = fundSelected ? Visibility.Visible : Visibility.Collapsed;
     }
 
@@ -134,5 +137,10 @@ public sealed partial class PortfolioZoomPage : Page
     {
         if (sender is Button button && button.DataContext is FundPerformance fund)
             Frame.Navigate(typeof(FundChart), fund);
+    }
+
+    private void CancelButton_Click(object sender, RoutedEventArgs e)
+    {
+        ResetFundSearchGrid();
     }
 }
