@@ -14,6 +14,7 @@
     <PackageCertificateThumbprint>614EA46CEA717DE8170F8F74B44F97596F92E173</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NeutralLanguage>fr-FR</NeutralLanguage>
+    <AssemblyName>FundMon</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\LineChart.xaml" />
@@ -28,7 +29,6 @@
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
-    <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
 

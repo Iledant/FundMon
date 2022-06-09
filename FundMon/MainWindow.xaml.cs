@@ -17,6 +17,8 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        ExtendsContentIntoTitleBar = true;
+        SetTitleBar(TitleBar);
         Repo.Load(AppConfig.File);
         RootFrame.Navigate(typeof(PortfoliosPage));
         Repo.UpdateFundsHistorical();

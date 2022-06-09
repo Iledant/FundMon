@@ -8,7 +8,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Closed="Window_Closed">
-
-    <Frame x:Name="RootFrame" />
+    <Grid RowDefinitions="32,*">
+        <StackPanel x:Name="TitleBar" Grid.Row="0" Orientation="Horizontal">
+            <Image Source="Assets/Square44x44Logo.targetsize-24.png" />
+            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Text="{x:Bind Title}" TextWrapping="NoWrap"/>
+        </StackPanel>
+        <Frame Grid.Row="1" x:Name="RootFrame" />
+    </Grid>
+    
 
 </Window>
