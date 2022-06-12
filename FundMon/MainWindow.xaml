@@ -8,7 +8,7 @@
     xmlns:repo="using:FundMon.Repository"
     Closed="Window_Closed"
     mc:Ignorable="d">
-    <Grid RowDefinitions="32,*">
+    <Grid RowDefinitions="32,*,Auto">
         <StackPanel
             x:Name="TitleBar"
             Grid.Row="0"
@@ -28,7 +28,15 @@
                 TextWrapping="NoWrap" />
         </StackPanel>
         <Frame x:Name="RootFrame" Grid.Row="1" />
+        <Grid
+            Grid.Row="2"
+            Padding="2"
+            Background="{ThemeResource SystemAccentColorLight3}">
+            <TextBlock
+                Margin="0,0,10,0"
+                HorizontalAlignment="Right"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text="{x:Bind ViewModel.LastLog, Mode=OneWay}" />
+        </Grid>
     </Grid>
-
-
 </Window>

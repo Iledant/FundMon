@@ -227,6 +227,7 @@ public static class Repo
         {
             var historical = await MorningStarHelpers.GetHistoricalFromID(f.MorningStarID);
             f.Historical = new ObservableCollection<DateValue>(historical);
+            Config.Config.AddLog($"Historique de {f.Name} mis à jour");
         }
     }
 }
