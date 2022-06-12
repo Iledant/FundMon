@@ -2,6 +2,7 @@
 using FundMon.Pages;
 using FundMon.Repository;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -19,6 +20,8 @@ public sealed partial class MainWindow : Window
         InitializeComponent();
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(TitleBar);
+        Activated += MainWindow_Activated;
+        
         Repo.Load(AppConfig.File);
         RootFrame.Navigate(typeof(PortfoliosPage));
         Repo.UpdateFundsHistorical();
@@ -28,5 +31,15 @@ public sealed partial class MainWindow : Window
     {
         Repo.Save(AppConfig.File);
         AppConfig.SaveAndClose();
+    }
+
+    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        if (args.WindowActivationState == WindowActivationState.Deactivated)
+            AppTitleTextBlock.Foreground =
+                (SolidColorBrush)App.Current.Resources["WindowCaptionForegroundDisabled"];
+        else
+            AppTitleTextBlock.Foreground =
+                (SolidColorBrush)App.Current.Resources["WindowCaptionForeground"];
     }
 }
