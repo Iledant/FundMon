@@ -14,6 +14,7 @@ public partial class FundChartViewmodel : ObservableObject
 
     [ObservableProperty]
     private List<DateValue> _values;
+    private Dictionary<int, DateTime> _periods;
 
     [ObservableProperty]
     [AlsoNotifyChangeFor(nameof(HasNoAverage))]
@@ -21,6 +22,14 @@ public partial class FundChartViewmodel : ObservableObject
     [AlsoNotifyChangeFor(nameof(Has15DaysAverage))]
     [AlsoNotifyChangeFor(nameof(Has30DaysAverage))]
     private int _averageCount;
+
+    [ObservableProperty]
+    [AlsoNotifyChangeFor(nameof(IsFullPeriod))]
+    [AlsoNotifyChangeFor(nameof(Is1MonthPeriod))]
+    [AlsoNotifyChangeFor(nameof(Is3MonthsPeriod))]
+    [AlsoNotifyChangeFor(nameof(Is6MonthsPeriod))]
+    [AlsoNotifyChangeFor(nameof(Is12MonthsPeriod))]
+    private int _period = 0;
 
     [ObservableProperty]
     private DateSelection _dateSelection = new(DateTime.MinValue,DateTime.MaxValue);
@@ -36,8 +45,15 @@ public partial class FundChartViewmodel : ObservableObject
 
     public bool Has30DaysAverage => _averageCount == 30;
 
+    public bool IsFullPeriod => _period == 0;
+    public bool Is1MonthPeriod => _period == 1;
+    public bool Is3MonthsPeriod => _period == 2;
+    public bool Is6MonthsPeriod => _period == 3;
+    public bool Is12MonthsPeriod => _period == 4;
+
     public ICommand SetAverageCountCommand;
     public ICommand ZoomOutCommand;
+    public ICommand SetPeriodCommand;
 
     public FundPerformance Fund
     {
@@ -53,12 +69,31 @@ public partial class FundChartViewmodel : ObservableObject
     {
         SetAverageCountCommand = new RelayCommand<int>(SetAverageCount);
         ZoomOutCommand = new RelayCommand(ZoomOut);
+        SetPeriodCommand = new RelayCommand<int>(SetPeriod);
         AverageCount = 0;
+        DateTime now = DateTime.Now;
+        _periods = new Dictionary<int, DateTime> {
+            { 0, DateTime.MinValue },
+            { 1, now.AddMonths(-1) },
+            { 2, now.AddMonths(-3) },
+            { 3, now.AddMonths(-6) },
+            { 4, now.AddMonths(-12) },
+        };
     }
 
     private void SetAverageCount(int days)
     {
         AverageCount = days;
+    }
+
+    private void SetPeriod(int periodIndex)
+    {
+        if (_periods.ContainsKey(periodIndex))
+        {
+            DateTime periodBegin = _periods[periodIndex];
+            DateSelection = new DateSelection(periodBegin, DateTime.Now);
+            Period = periodIndex;
+        }
     }
 
     private void ZoomOut()

@@ -71,6 +71,57 @@
                     </SplitButton.Flyout>
                 </SplitButton>
             </AppBarElementContainer>
+            <AppBarElementContainer>
+                <SplitButton ToolTipService.ToolTip="Périodes">
+                    <SplitButton.Content>
+                        <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xECE8;" />
+                    </SplitButton.Content>
+                    <SplitButton.Flyout>
+                        <MenuFlyout Placement="RightEdgeAlignedTop">
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetPeriodCommand}"
+                                IsChecked="{x:Bind ViewModel.IsFullPeriod, Mode=OneWay}"
+                                Text="Tout">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>0</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetPeriodCommand}"
+                                IsChecked="{x:Bind ViewModel.Is1MonthPeriod, Mode=OneWay}"
+                                Text="Dernier mois">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>1</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetPeriodCommand}"
+                                IsChecked="{x:Bind ViewModel.Is3MonthsPeriod, Mode=OneWay}"
+                                Text="3 derniers mois">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>2</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetPeriodCommand}"
+                                IsChecked="{x:Bind ViewModel.Is6MonthsPeriod, Mode=OneWay}"
+                                Text="6 derniers mois">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>3</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                            <ToggleMenuFlyoutItem
+                                Command="{x:Bind ViewModel.SetPeriodCommand}"
+                                IsChecked="{x:Bind ViewModel.Is12MonthsPeriod, Mode=OneWay}"
+                                Text="12 derniers mois">
+                                <ToggleMenuFlyoutItem.CommandParameter>
+                                    <x:Int32>4</x:Int32>
+                                </ToggleMenuFlyoutItem.CommandParameter>
+                            </ToggleMenuFlyoutItem>
+                        </MenuFlyout>
+                    </SplitButton.Flyout>
+                </SplitButton>
+            </AppBarElementContainer>
             <AppBarToggleButton
                 Icon="ZoomIn"
                 IsChecked="{x:Bind ViewModel.IsZoomEnabled, Mode=TwoWay}"
