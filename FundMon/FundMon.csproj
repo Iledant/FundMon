@@ -11,7 +11,7 @@
     <UseWinUI>true</UseWinUI>
     <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
     <DefaultLanguage>fr-FR</DefaultLanguage>
-    <PackageCertificateThumbprint>614EA46CEA717DE8170F8F74B44F97596F92E173</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>22898B5B3887F67EF7790E1EF06A42122198BAC1</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NeutralLanguage>fr-FR</NeutralLanguage>
     <AssemblyName>FundMon</AssemblyName>
