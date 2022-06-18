@@ -18,6 +18,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\LineChart.xaml" />
+    <None Remove="Controls\PortfolioEditModal.xaml" />
     <None Remove="Pages\FundChart.xaml" />
     <None Remove="Pages\PortfoliosPage.xaml" />
     <None Remove="Pages\PortfolioZoomPage.xaml" />
@@ -69,5 +70,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Themes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\PortfolioEditModal.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>

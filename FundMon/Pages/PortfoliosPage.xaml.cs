@@ -1,4 +1,5 @@
-﻿using FundMon.Repository;
+﻿using FundMon.Controls;
+using FundMon.Repository;
 using FundMon.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -9,35 +10,20 @@ namespace FundMon.Pages;
 public sealed partial class PortfoliosPage : Page
 {
     private readonly PortfoliosViewModel ViewModel;
-    private Portfolio SelectedPortfolio = null;
     public PortfoliosPage()
     {
         InitializeComponent();
         ViewModel = new();
     }
 
-    private void AddButton_Click(object sender, RoutedEventArgs e)
+    private void EditModal_Done(object sender, DoneEventArgs e)
     {
-        if (NameTextBox.Text == "")
+        if (e.Escaped)
             return;
-        if (AddButton.Content as string == "Ajouter")
-            AddPortfolio();
+        if (ViewModel.SelectedPortfolio.ID == 0)
+            ViewModel.AddPortfolio();
         else
-            ViewModel.UpdatePortfolio(SelectedPortfolio.ID, NameTextBox.Text, DescriptionTextBox.Text);
-        AddEditGrid.Visibility = Visibility.Collapsed;
-    }
-
-    private void AddPortfolio()
-    {
-        ViewModel.AddPortfolio(NameTextBox.Text, DescriptionTextBox.Text);
-        NameTextBox.Text = "";
-        DescriptionTextBox.Text = "";
-
-    }
-
-    private void NameTextBox_TextChanged(object sender, Microsoft.UI.Xaml.Controls.TextChangedEventArgs e)
-    {
-        AddButton.IsEnabled = NameTextBox.Text != "";
+            ViewModel.UpdatePortfolio();
     }
 
     private void GridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
@@ -48,17 +34,14 @@ public sealed partial class PortfoliosPage : Page
 
     private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (GridView.SelectedItem is Portfolio portfolio && portfolio != SelectedPortfolio)
+        if (GridView.SelectedItem is Portfolio portfolio && portfolio != ViewModel.SelectedPortfolio)
         {
             EditAppBarButton.IsEnabled = true;
-            SelectedPortfolio = portfolio;
-            AddEditGrid.Visibility = Visibility.Collapsed;
+            ViewModel.SelectedPortfolio = portfolio;
         }
         else
         {
             EditAppBarButton.IsEnabled = false;
-            AddEditGrid.Visibility = Visibility.Collapsed;
-            SelectedPortfolio = null;
         }
     }
 
@@ -79,40 +62,23 @@ public sealed partial class PortfoliosPage : Page
             ViewModel.Portfolios.Remove(portfolio);
     }
 
-    private void NameTextBoxAccelerator_Invoked(Microsoft.UI.Xaml.Input.KeyboardAccelerator sender, Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs args)
-    {
-        if (NameTextBox.Text != "")
-            AddPortfolio();
-    }
-
     private void EditAppBarButton_Click(object sender, RoutedEventArgs e)
     {
-        if (GridView.SelectedItem is Portfolio portfolio)
-            EditPortfolio(portfolio);
+        if (ViewModel.SelectedPortfolio is not null)
+            ViewModel.ShowEditPortfolioModal();
     }
 
     private void AddAppBarButton_Click(object sender, RoutedEventArgs e)
     {
-        SelectedPortfolio = null;
-        NameTextBox.Text = "";
-        DescriptionTextBox.Text = "";
-        AddButton.Content = "Ajouter";
-        AddButton.IsEnabled = false;
-        AddEditGrid.Visibility = Visibility.Visible;
+        ViewModel.ShowAddPortfolioModal();
     }
 
     private void MenuFlyoutEdit_Click(object sender, RoutedEventArgs e)
     {
         if (sender is MenuFlyoutItem item && item.DataContext is Portfolio portfolio)
-            EditPortfolio(portfolio);
-    }
-
-    private void EditPortfolio(Portfolio portfolio)
-    {
-        SelectedPortfolio = portfolio;
-        NameTextBox.Text = SelectedPortfolio.Name;
-        DescriptionTextBox.Text = SelectedPortfolio.Description;
-        AddButton.Content = "Modifier";
-        AddEditGrid.Visibility = Visibility.Visible;
+        {
+            ViewModel.SelectedPortfolio = portfolio;
+            ViewModel.ShowEditPortfolioModal();
+        }
     }
 }

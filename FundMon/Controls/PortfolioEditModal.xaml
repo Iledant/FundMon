@@ -1,0 +1,51 @@
+﻿<UserControl
+    x:Class="FundMon.Controls.PortfolioEditModal"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FundMon.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch"
+    BorderThickness="0"
+    mc:Ignorable="d">
+
+    <Grid Visibility="{x:Bind VisualState, Mode=OneWay}">
+        <Rectangle Fill="{ThemeResource ButtonBackgroundThemeBrush}" Tapped="RectangleTapped" />
+        <Border
+            Width="300"
+            Height="200"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            CornerRadius="10"
+            Translation="0,0,32">
+            <Border.Shadow>
+                <ThemeShadow />
+            </Border.Shadow>
+            <Grid
+                Margin="10"
+                RowDefinitions="Auto,Auto,Auto"
+                RowSpacing="10">
+                <TextBox
+                    x:Name="NameTextBox"
+                    Grid.Row="0"
+                    Header="Nom"
+                    Text="{x:Bind PName, Mode=TwoWay}"
+                    TextChanged="NameTextBox_TextChanged" />
+                <TextBox
+                    x:Name="DescriptionTextBox"
+                    Grid.Row="1"
+                    Header="Description"
+                    Text="{x:Bind PDescription, Mode=TwoWay}" />
+                <Button
+                    x:Name="DoneButton"
+                    Grid.Row="2"
+                    Click="DoneButton_Click"
+                    Content="{x:Bind DoneButtonName, Mode=OneWay}"
+                    IsEnabled="False"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
