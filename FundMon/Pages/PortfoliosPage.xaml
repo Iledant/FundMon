@@ -17,6 +17,7 @@
             <GradientStop Offset="1.0" Color="{ThemeResource SystemAccentColorLight3}" />
         </LinearGradientBrush>
     </Page.Resources>
+
     <Grid>
         <StackPanel Margin="10" Orientation="Vertical">
 
@@ -49,7 +50,6 @@
                 IsDoubleTapEnabled="True"
                 ItemsSource="{x:Bind ViewModel.Portfolios, Mode=OneWay}"
                 SelectionChanged="GridView_SelectionChanged">
-
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="repo:Portfolio">
                         <UserControl>
@@ -97,42 +97,6 @@
                 </GridView.ItemTemplate>
             </GridView>
 
-            <!--<Grid
-                x:Name="AddEditGrid"
-                Margin="10"
-                ColumnSpacing="10"
-                RowSpacing="10"
-                Visibility="Collapsed">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" Background="{ThemeResource SystemAccentColor}" />
-                <TextBox
-                    x:Name="NameTextBox"
-                    Grid.Column="1"
-                    MinWidth="150"
-                    Header="Nom"
-                    TextChanged="NameTextBox_TextChanged">
-                    <TextBox.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Enter" Invoked="NameTextBoxAccelerator_Invoked" />
-                    </TextBox.KeyboardAccelerators>
-                </TextBox>
-                <TextBox
-                    x:Name="DescriptionTextBox"
-                    Grid.Column="2"
-                    MinWidth="150"
-                    Header="Description" />
-                <Button
-                    x:Name="AddButton"
-                    Grid.Column="3"
-                    VerticalAlignment="Bottom"
-                    Click="AddButton_Click"
-                    Content="Ajouter"
-                    IsEnabled="False" />
-            </Grid>-->
         </StackPanel>
         <controls:PortfolioEditModal
             x:Name="EditModal"
