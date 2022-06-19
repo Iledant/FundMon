@@ -43,7 +43,11 @@
                 Margin="10,0,0,0"
                 Click="AddFundAppBarButton_Click"
                 Icon="Add"
-                Label="Nouveau" />
+                Label="Nouveau">
+                <AppBarButton.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="N" Modifiers="Control" />
+                </AppBarButton.KeyboardAccelerators>
+            </AppBarButton>
         </CommandBar>
 
         <controls1:DataGrid

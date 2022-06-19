@@ -28,7 +28,12 @@
                     x:Name="AddAppBarButton"
                     Click="AddAppBarButton_Click"
                     Icon="Add"
-                    Label="Nouveau" />
+                    Label="Nouveau">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="N" Modifiers="Control" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+
                 <AppBarButton
                     x:Name="EditAppBarButton"
                     Click="EditAppBarButton_Click"
