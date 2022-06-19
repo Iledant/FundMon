@@ -8,7 +8,12 @@
     HorizontalAlignment="Stretch"
     VerticalAlignment="Stretch"
     BorderThickness="0"
+    KeyboardAcceleratorPlacementMode="Hidden"
     mc:Ignorable="d">
+
+    <UserControl.KeyboardAccelerators>
+        <KeyboardAccelerator Key="Escape" Invoked="EscapeKeyboardAccelerator_Invoked" />
+    </UserControl.KeyboardAccelerators>
 
     <Grid Visibility="{x:Bind VisualState, Mode=OneWay}">
         <Rectangle Fill="{ThemeResource ButtonBackgroundThemeBrush}" Tapped="RectangleTapped" />
@@ -38,13 +43,21 @@
                     Grid.Row="1"
                     Header="Description"
                     Text="{x:Bind PDescription, Mode=TwoWay}" />
-                <Button
-                    x:Name="DoneButton"
+                <StackPanel
                     Grid.Row="2"
-                    Click="DoneButton_Click"
-                    Content="{x:Bind DoneButtonName, Mode=OneWay}"
-                    IsEnabled="False"
-                    Style="{ThemeResource AccentButtonStyle}" />
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <Button
+                        x:Name="DoneButton"
+                        Click="DoneButton_Click"
+                        Content="{x:Bind DoneButtonName, Mode=OneWay}"
+                        IsEnabled="False"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                    <Button
+                        x:Name="EscapeButton"
+                        Click="EscapeButton_Click"
+                        Content="Annuler" />
+                </StackPanel>
             </Grid>
         </Border>
     </Grid>

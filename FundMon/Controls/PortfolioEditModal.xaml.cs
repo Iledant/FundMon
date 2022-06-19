@@ -94,6 +94,11 @@ public sealed partial class PortfolioEditModal : UserControl
 
     private void RectangleTapped(object _1, TappedRoutedEventArgs _2)
     {
+        Escape();
+    }
+
+    private void Escape()
+    {
         VisualState = Visibility.Collapsed;
         Done?.Invoke(this, new DoneEventArgs(true));
     }
@@ -107,5 +112,15 @@ public sealed partial class PortfolioEditModal : UserControl
             Description = PDescription;
             Done?.Invoke(this, new DoneEventArgs(false));
         }
+    }
+
+    private void EscapeKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        Escape();
+    }
+
+    private void EscapeButton_Click(object sender, RoutedEventArgs e)
+    {
+        Escape();
     }
 }
