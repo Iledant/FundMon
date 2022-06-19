@@ -2,6 +2,7 @@
     x:Class="FundMon.Pages.PortfolioZoomPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:FundMon.Controls"
     xmlns:controls1="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:converter="using:FundMon.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -22,311 +23,314 @@
             </Style.Setters>
         </Style>
     </Page.Resources>
+    <Grid>
+        <StackPanel Margin="10" Orientation="Vertical">
+            <CommandBar Width="Auto" DefaultLabelPosition="Right">
+                <CommandBar.Content>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button
+                            x:Name="BackButton"
+                            Click="BackButton_Click"
+                            Style="{ThemeResource NavigationBackButtonNormalStyle}"
+                            ToolTipService.ToolTip="Portefeuilles" />
+                        <TextBlock
+                            x:Name="TitleTextBox"
+                            Style="{ThemeResource TitleTextBlockStyle}"
+                            Text="Portefeuille" />
+                    </StackPanel>
+                </CommandBar.Content>
+                <AppBarButton
+                    x:Name="AddFundAppBarButton"
+                    Margin="10,0,0,0"
+                    Click="AddFundAppBarButton_Click"
+                    Icon="Add"
+                    Label="Nouveau">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="N" Modifiers="Control" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+            </CommandBar>
 
-    <StackPanel Margin="10" Orientation="Vertical">
-        <CommandBar Width="Auto" DefaultLabelPosition="Right">
-            <CommandBar.Content>
-                <StackPanel Orientation="Horizontal" Spacing="10">
-                    <Button
-                        x:Name="BackButton"
-                        Click="BackButton_Click"
-                        Style="{ThemeResource NavigationBackButtonNormalStyle}"
-                        ToolTipService.ToolTip="Portefeuilles" />
+            <controls1:DataGrid
+                x:Name="FundDataGrid"
+                MaxHeight="300"
+                Margin="10,20,10,0"
+                AutoGenerateColumns="False"
+                CanUserReorderColumns="False"
+                GridLinesVisibility="All"
+                ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}"
+                Sorting="FundDataGrid_Sorting"
+                VerticalScrollBarVisibility="Auto">
+                <controls1:DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="prim:DataGridColumnHeader">
+                        <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        <Setter Property="FontSize" Value="15" />
+                    </Style>
+                </controls1:DataGrid.ColumnHeaderStyle>
+
+                <controls1:DataGrid.Columns>
+                    <controls1:DataGridTextColumn
+                        Width="Auto"
+                        Binding="{Binding Fund.Name}"
+                        CanUserSort="False"
+                        Header="Nom"
+                        IsReadOnly="True"
+                        Tag="Name" />
+                    <controls1:DataGridTextColumn
+                        Width="Auto"
+                        Binding="{Binding AverageCost, Mode=TwoWay, Converter={StaticResource doubleConverter}}"
+                        CanUserSort="True"
+                        CellStyle="{StaticResource rightAlignCellStyle}"
+                        Header="PRM"
+                        Tag="AverageCost" />
+                    <controls1:DataGridTextColumn
+                        Width="Auto"
+                        Binding="{Binding LastValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
+                        CanUserSort="True"
+                        CellStyle="{StaticResource rightAlignCellStyle}"
+                        Header="Dernière"
+                        IsReadOnly="True"
+                        Tag="LastValue" />
+                    <controls1:DataGridTextColumn
+                        Width="Auto"
+                        Binding="{Binding Evolution, Mode=OneWay, Converter={StaticResource percentageConverter}}"
+                        CanUserSort="True"
+                        CellStyle="{StaticResource rightAlignCellStyle}"
+                        Header="Évolution"
+                        IsReadOnly="True"
+                        Tag="Evolution" />
+                    <controls1:DataGridTextColumn
+                        Width="Auto"
+                        Binding="{Binding LastWeekValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
+                        CanUserSort="True"
+                        CellStyle="{StaticResource rightAlignCellStyle}"
+                        Header="-1 sem."
+                        IsReadOnly="True"
+                        Tag="LastWeekValue" />
+                    <controls1:DataGridTextColumn
+                        Width="Auto"
+                        Binding="{Binding LastMonthValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
+                        CanUserSort="True"
+                        CellStyle="{StaticResource rightAlignCellStyle}"
+                        Header="-1 mois"
+                        IsReadOnly="True"
+                        Tag="LastMonthValue" />
+                    <controls1:DataGridTemplateColumn Width="Auto">
+                        <controls1:DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button
+                                        Padding="2"
+                                        Click="RowShowChart_Click"
+                                        ToolTipService.ToolTip="Graphique de l'historique">
+                                        <FontIcon
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="15"
+                                            Glyph="&#xE9D9;" />
+                                    </Button>
+                                    <Button
+                                        Padding="2"
+                                        Click="RowDeleteButton_Click"
+                                        ToolTipService.ToolTip="Supprimer">
+                                        <FontIcon
+                                            FontFamily="Segoe Fluent Icons"
+                                            FontSize="15"
+                                            Glyph="&#xE74D;" />
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </controls1:DataGridTemplateColumn.CellTemplate>
+                    </controls1:DataGridTemplateColumn>
+                </controls1:DataGrid.Columns>
+            </controls1:DataGrid>
+
+            <Grid
+                x:Name="FundSearchGrid"
+                Margin="10,20,0,0"
+                ColumnSpacing="10"
+                RowSpacing="20"
+                Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Border
+                    Grid.RowSpan="4"
+                    Grid.Column="0"
+                    Background="{ThemeResource ButtonForegroundThemeBrush}" />
+
+                <Grid
+                    x:Name="StepOneGrid"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    VerticalAlignment="Top">
+                    <Ellipse
+                        Width="18"
+                        Height="18"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Stroke="{ThemeResource ButtonForegroundThemeBrush}"
+                        StrokeThickness="1" />
                     <TextBlock
-                        x:Name="TitleTextBox"
-                        Style="{ThemeResource TitleTextBlockStyle}"
-                        Text="Portefeuille" />
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="1" />
+                </Grid>
+
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <TextBox
+                        x:Name="FundSearchTextBox"
+                        Header="Recherche sur MorningStar"
+                        TextChanged="FundSearchTextBox_TextChanged">
+                        <TextBox.KeyboardAccelerators>
+                            <KeyboardAccelerator Key="Enter" Invoked="SearchAccelerator_Invoked" />
+                        </TextBox.KeyboardAccelerators>
+                    </TextBox>
+                    <Button
+                        x:Name="FundSearchButton"
+                        VerticalAlignment="Bottom"
+                        Click="FundSearchButton_Click"
+                        Content="Chercher"
+                        IsEnabled="False" />
+                    <ProgressRing
+                        x:Name="FundSearchProgressRing"
+                        IsIndeterminate="True"
+                        Visibility="Collapsed" />
                 </StackPanel>
-            </CommandBar.Content>
-            <AppBarButton
-                x:Name="AddFundAppBarButton"
-                Margin="10,0,0,0"
-                Click="AddFundAppBarButton_Click"
-                Icon="Add"
-                Label="Nouveau">
-                <AppBarButton.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="N" Modifiers="Control" />
-                </AppBarButton.KeyboardAccelerators>
-            </AppBarButton>
-        </CommandBar>
 
-        <controls1:DataGrid
-            x:Name="FundDataGrid"
-            MaxHeight="300"
-            Margin="10,20,10,0"
-            AutoGenerateColumns="False"
-            CanUserReorderColumns="False"
-            GridLinesVisibility="All"
-            ItemsSource="{x:Bind ViewModel.Performances, Mode=OneWay}"
-            Sorting="FundDataGrid_Sorting"
-            VerticalScrollBarVisibility="Auto">
-            <controls1:DataGrid.ColumnHeaderStyle>
-                <Style TargetType="prim:DataGridColumnHeader">
-                    <Setter Property="HorizontalContentAlignment" Value="Center" />
-                    <Setter Property="FontSize" Value="15" />
-                </Style>
-            </controls1:DataGrid.ColumnHeaderStyle>
+                <Grid
+                    x:Name="StepTwoGrid"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Visibility="Collapsed">
+                    <Ellipse
+                        Width="18"
+                        Height="18"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Stroke="{ThemeResource ButtonForegroundThemeBrush}"
+                        StrokeThickness="1" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="2" />
+                </Grid>
 
-            <controls1:DataGrid.Columns>
-                <controls1:DataGridTextColumn
-                    Width="Auto"
-                    Binding="{Binding Fund.Name}"
-                    CanUserSort="False"
-                    Header="Nom"
-                    IsReadOnly="True"
-                    Tag="Name" />
-                <controls1:DataGridTextColumn
-                    Width="Auto"
-                    Binding="{Binding AverageCost, Mode=TwoWay, Converter={StaticResource doubleConverter}}"
-                    CanUserSort="True"
-                    CellStyle="{StaticResource rightAlignCellStyle}"
-                    Header="PRM"
-                    Tag="AverageCost" />
-                <controls1:DataGridTextColumn
-                    Width="Auto"
-                    Binding="{Binding LastValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
-                    CanUserSort="True"
-                    CellStyle="{StaticResource rightAlignCellStyle}"
-                    Header="Dernière"
-                    IsReadOnly="True"
-                    Tag="LastValue" />
-                <controls1:DataGridTextColumn
-                    Width="Auto"
-                    Binding="{Binding Evolution, Mode=OneWay, Converter={StaticResource percentageConverter}}"
-                    CanUserSort="True"
-                    CellStyle="{StaticResource rightAlignCellStyle}"
-                    Header="Évolution"
-                    IsReadOnly="True"
-                    Tag="Evolution" />
-                <controls1:DataGridTextColumn
-                    Width="Auto"
-                    Binding="{Binding LastWeekValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
-                    CanUserSort="True"
-                    CellStyle="{StaticResource rightAlignCellStyle}"
-                    Header="-1 sem."
-                    IsReadOnly="True"
-                    Tag="LastWeekValue" />
-                <controls1:DataGridTextColumn
-                    Width="Auto"
-                    Binding="{Binding LastMonthValue, Mode=OneWay, Converter={StaticResource currencyConverter}}"
-                    CanUserSort="True"
-                    CellStyle="{StaticResource rightAlignCellStyle}"
-                    Header="-1 mois"
-                    IsReadOnly="True"
-                    Tag="LastMonthValue" />
-                <controls1:DataGridTemplateColumn Width="Auto">
-                    <controls1:DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button
-                                    Padding="2"
-                                    Click="RowShowChart_Click"
-                                    ToolTipService.ToolTip="Graphique de l'historique">
-                                    <FontIcon
-                                        FontFamily="Segoe Fluent Icons"
-                                        FontSize="15"
-                                        Glyph="&#xE9D9;" />
-                                </Button>
-                                <Button
-                                    Padding="2"
-                                    Click="RowDeleteButton_Click"
-                                    ToolTipService.ToolTip="Supprimer">
-                                    <FontIcon
-                                        FontFamily="Segoe Fluent Icons"
-                                        FontSize="15"
-                                        Glyph="&#xE74D;" />
-                                </Button>
-                            </StackPanel>
+                <GridView
+                    x:Name="FundSearchGridView"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
+                    SelectionChanged="FundSearchGridView_SelectionChanged"
+                    Visibility="Collapsed">
+                    <GridView.ItemTemplate>
+                        <DataTemplate x:DataType="repo:MorningstarResponseLine">
+                            <Grid
+                                Padding="10"
+                                Background="{ThemeResource SystemAccentColorLight3}"
+                                ColumnSpacing="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" MinHeight="50" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" MinWidth="10" />
+                                    <ColumnDefinition Width="*" MinWidth="250" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Text="Nom" />
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Text="{x:Bind Name}"
+                                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Text="Catégorie" />
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Text="{x:Bind Category}" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                    Text="ID" />
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Text="{x:Bind MorningStarID}" />
+                            </Grid>
                         </DataTemplate>
-                    </controls1:DataGridTemplateColumn.CellTemplate>
-                </controls1:DataGridTemplateColumn>
-            </controls1:DataGrid.Columns>
-        </controls1:DataGrid>
+                    </GridView.ItemTemplate>
+                </GridView>
 
-        <Grid
-            x:Name="FundSearchGrid"
-            Margin="10,20,0,0"
-            ColumnSpacing="10"
-            RowSpacing="20"
-            Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <Border
-                Grid.RowSpan="4"
-                Grid.Column="0"
-                Background="{ThemeResource ButtonForegroundThemeBrush}" />
-
-            <Grid
-                x:Name="StepOneGrid"
-                Grid.Row="0"
-                Grid.Column="1"
-                VerticalAlignment="Top">
-                <Ellipse
-                    Width="18"
-                    Height="18"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Stroke="{ThemeResource ButtonForegroundThemeBrush}"
-                    StrokeThickness="1" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="1" />
-            </Grid>
-
-            <StackPanel
-                Grid.Row="0"
-                Grid.Column="2"
-                Orientation="Horizontal"
-                Spacing="10">
+                <Grid
+                    x:Name="StepThreeGrid"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    Visibility="Collapsed">
+                    <Ellipse
+                        Width="18"
+                        Height="18"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Stroke="{ThemeResource ButtonForegroundThemeBrush}"
+                        StrokeThickness="1" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Text="3" />
+                </Grid>
                 <TextBox
-                    x:Name="FundSearchTextBox"
-                    Header="Recherche sur MorningStar"
-                    TextChanged="FundSearchTextBox_TextChanged">
-                    <TextBox.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="Enter" Invoked="SearchAccelerator_Invoked" />
-                    </TextBox.KeyboardAccelerators>
-                </TextBox>
-                <Button
-                    x:Name="FundSearchButton"
-                    VerticalAlignment="Bottom"
-                    Click="FundSearchButton_Click"
-                    Content="Chercher"
-                    IsEnabled="False" />
-                <ProgressRing
-                    x:Name="FundSearchProgressRing"
-                    IsIndeterminate="True"
+                    x:Name="AverageCostTextBox"
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    MaxWidth="200"
+                    HorizontalAlignment="Left"
+                    Header="Prix moyen d'achat"
+                    TextChanged="AverageCostTextBox_TextChanged"
                     Visibility="Collapsed" />
-            </StackPanel>
-
-            <Grid
-                x:Name="StepTwoGrid"
-                Grid.Row="1"
-                Grid.Column="1"
-                VerticalAlignment="Top"
-                Visibility="Collapsed">
-                <Ellipse
-                    Width="18"
-                    Height="18"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Stroke="{ThemeResource ButtonForegroundThemeBrush}"
-                    StrokeThickness="1" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="2" />
+                <StackPanel
+                    Grid.Row="3"
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Spacing="10">
+                    <Button
+                        x:Name="AddFundButton"
+                        Click="AddFundButton_Click"
+                        Content="Ajouter le fond"
+                        IsEnabled="False"
+                        Style="{ThemeResource AccentButtonStyle}" />
+                    <Button
+                        x:Name="CancelButton"
+                        Click="CancelButton_Click"
+                        Content="Annuler" />
+                </StackPanel>
             </Grid>
+        </StackPanel>
 
-            <GridView
-                x:Name="FundSearchGridView"
-                Grid.Row="1"
-                Grid.Column="2"
-                ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
-                SelectionChanged="FundSearchGridView_SelectionChanged"
-                Visibility="Collapsed">
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="repo:MorningstarResponseLine">
-                        <Grid
-                            Padding="10"
-                            Background="{ThemeResource SystemAccentColorLight3}"
-                            ColumnSpacing="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" MinHeight="50" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" MinWidth="10" />
-                                <ColumnDefinition Width="*" MinWidth="250" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                Text="Nom" />
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Text="{x:Bind Name}"
-                                TextWrapping="Wrap" />
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                Text="Catégorie" />
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Text="{x:Bind Category}" />
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Style="{ThemeResource BodyStrongTextBlockStyle}"
-                                Text="ID" />
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Text="{x:Bind MorningStarID}" />
-                        </Grid>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
-
-            <Grid
-                x:Name="StepThreeGrid"
-                Grid.Row="2"
-                Grid.Column="1"
-                VerticalAlignment="Top"
-                Visibility="Collapsed">
-                <Ellipse
-                    Width="18"
-                    Height="18"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Stroke="{ThemeResource ButtonForegroundThemeBrush}"
-                    StrokeThickness="1" />
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="3" />
-            </Grid>
-            <TextBox
-                x:Name="AverageCostTextBox"
-                Grid.Row="2"
-                Grid.Column="2"
-                MaxWidth="200"
-                HorizontalAlignment="Left"
-                Header="Prix moyen d'achat"
-                TextChanged="AverageCostTextBox_TextChanged"
-                Visibility="Collapsed" />
-            <StackPanel
-                Grid.Row="3"
-                Grid.Column="2"
-                Orientation="Horizontal"
-                Spacing="10">
-                <Button
-                    x:Name="AddFundButton"
-                    Click="AddFundButton_Click"
-                    Content="Ajouter le fond"
-                    IsEnabled="False"
-                    Style="{ThemeResource AccentButtonStyle}" />
-                <Button
-                    x:Name="CancelButton"
-                    Click="CancelButton_Click"
-                    Content="Annuler" />
-            </StackPanel>
-        </Grid>
-    </StackPanel>
+        <controls:FundAddModal x:Name="Modal" />
+    </Grid>
 </Page>

@@ -39,7 +39,7 @@ public class MorningstarResponseLine
     public string? Abbreviation;
 }
 
-internal static class MorningStarHelpers
+public static class MorningStarHelpers
 {
     private readonly static HttpClient _client = new();
     private readonly static NumberFormatInfo _numberFormat = new CultureInfo("en-US").NumberFormat;

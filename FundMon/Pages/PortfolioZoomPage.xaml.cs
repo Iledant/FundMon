@@ -106,7 +106,8 @@ public sealed partial class PortfolioZoomPage : Page
 
     private void AddFundAppBarButton_Click(object sender, RoutedEventArgs e)
     {
-        FundSearchGrid.Visibility = Visibility.Visible;
+        // FundSearchGrid.Visibility = Visibility.Visible;
+        Modal.VisualState = Visibility.Visible;
     }
 
     private void FundDataGrid_Sorting(object sender, CommunityToolkit.WinUI.UI.Controls.DataGridColumnEventArgs e)
