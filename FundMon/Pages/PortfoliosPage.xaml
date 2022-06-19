@@ -16,6 +16,39 @@
             <GradientStop Offset="0.0" Color="{ThemeResource SystemAccentColorLight2}" />
             <GradientStop Offset="1.0" Color="{ThemeResource SystemAccentColorLight3}" />
         </LinearGradientBrush>
+        <XamlUICommand
+            x:Name="AddUICommand"
+            Command="{x:Bind ViewModel.ShowAddPortfolioModalCommand, Mode=OneWay}"
+            Description="Créer un nouveau portefeuille"
+            Label="Nouveau">
+            <XamlUICommand.KeyboardAccelerators>
+                <KeyboardAccelerator Key="N" Modifiers="Control" />
+            </XamlUICommand.KeyboardAccelerators>
+            <XamlUICommand.IconSource>
+                <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE710;" />
+            </XamlUICommand.IconSource>
+        </XamlUICommand>
+        <XamlUICommand
+            x:Name="EditUICommand"
+            Command="{x:Bind ViewModel.ShowEditPortfolioModalCommand}"
+            Description="Modifier le portefeuille"
+            Label="Éditer">
+            <XamlUICommand.KeyboardAccelerators>
+                <KeyboardAccelerator Key="E" Modifiers="Control" />
+            </XamlUICommand.KeyboardAccelerators>
+            <XamlUICommand.IconSource>
+                <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE70F;" />
+            </XamlUICommand.IconSource>
+        </XamlUICommand>
+        <XamlUICommand
+            x:Name="DeleteUICommand"
+            Command="{x:Bind ViewModel.DeletePortfolioCommand}"
+            Description="Supprimer le portefeuille"
+            Label="Supprimer">
+            <XamlUICommand.IconSource>
+                <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE74D;" />
+            </XamlUICommand.IconSource>
+        </XamlUICommand>
     </Page.Resources>
 
     <Grid>
@@ -25,22 +58,11 @@
                 <CommandBar.Content>
                     <TextBlock Style="{ThemeResource TitleTextBlockStyle}">Portefeuilles</TextBlock>
                 </CommandBar.Content>
+                <AppBarButton Command="{StaticResource AddUICommand}" />
                 <AppBarButton
-                    x:Name="AddAppBarButton"
-                    Click="AddAppBarButton_Click"
-                    Icon="Add"
-                    Label="Nouveau">
-                    <AppBarButton.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="N" Modifiers="Control" />
-                    </AppBarButton.KeyboardAccelerators>
-                </AppBarButton>
-
-                <AppBarButton
-                    x:Name="EditAppBarButton"
-                    Click="EditAppBarButton_Click"
-                    Icon="Edit"
-                    IsEnabled="False"
-                    Label="Modifier" />
+                    Command="{StaticResource EditUICommand}"
+                    CommandParameter="{x:Bind ViewModel.SelectedPortfolio, Mode=OneWay}"
+                    IsEnabled="{x:Bind ViewModel.HasSelectedPortfolio, Mode=OneWay}" />
             </CommandBar>
 
             <GridView
@@ -49,7 +71,7 @@
                 DoubleTapped="GridView_DoubleTapped"
                 IsDoubleTapEnabled="True"
                 ItemsSource="{x:Bind ViewModel.Portfolios, Mode=OneWay}"
-                SelectionChanged="GridView_SelectionChanged">
+                SelectedItem="{x:Bind ViewModel.SelectedPortfolio, Mode=TwoWay}">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="repo:Portfolio">
                         <UserControl>
@@ -77,18 +99,12 @@
                             <UserControl.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyout.Items>
-                                        <MenuFlyoutItem
-                                            Click="MenuFlyoutEdit_Click"
-                                            Icon="Edit"
-                                            Text="Modifier" />
+                                        <MenuFlyoutItem Command="{StaticResource EditUICommand}" CommandParameter="{x:Bind}" />
                                         <MenuFlyoutItem
                                             Click="MenuFlyoutForward_Click"
                                             Icon="Forward"
                                             Text="Fonds" />
-                                        <MenuFlyoutItem
-                                            Click="MenuFlyoutDelete_Click"
-                                            Icon="Delete"
-                                            Text="Supprimer" />
+                                        <MenuFlyoutItem Command="{StaticResource DeleteUICommand}" CommandParameter="{x:Bind}" />
                                     </MenuFlyout.Items>
                                 </MenuFlyout>
                             </UserControl.ContextFlyout>
@@ -100,9 +116,10 @@
         </StackPanel>
         <controls:PortfolioEditModal
             x:Name="EditModal"
-            Description="{x:Bind ViewModel.SelectedPortfolio.Description, Mode=TwoWay}"
+            Description="{x:Bind ViewModel.EditedPortfolio.Description, Mode=TwoWay}"
+            Done="{x:Bind ViewModel.EditModal_Done}"
             DoneButtonName="{x:Bind ViewModel.DoneButtonName, Mode=OneWay}"
-            PortfolioName="{x:Bind ViewModel.SelectedPortfolio.Name, Mode=TwoWay}"
+            PortfolioName="{x:Bind ViewModel.EditedPortfolio.Name, Mode=TwoWay}"
             VisualState="{x:Bind ViewModel.ModalVisibility, Mode=TwoWay}" />
     </Grid>
 </Page>

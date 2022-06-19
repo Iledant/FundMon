@@ -22,21 +22,6 @@ public sealed partial class PortfolioEditModal : UserControl
 
     public event DoneEventHandler Done;
 
-    private string _portfolioName = "";
-    private string _description = "";
-
-    public string PName
-    {
-        get => _portfolioName;
-        set => SetProperty(ref _portfolioName, value);
-    }
-
-    public string PDescription
-    {
-        get => _description;
-        set => SetProperty(ref _description, value);
-    }
-
     public Visibility VisualState
     {
         get => (Visibility)GetValue(VisualStateProperty);
@@ -52,7 +37,7 @@ public sealed partial class PortfolioEditModal : UserControl
         set
         {
             SetValue(PortfolioNameProperty, value);
-            PName = value.ToString();
+            NameTextBox.Text = value;
         }
     }
 
@@ -65,17 +50,16 @@ public sealed partial class PortfolioEditModal : UserControl
         set
         {
             SetValue(DescriptionProperty, value);
-            PDescription = value.ToString();
+            DescriptionTextBox.Text = value;
         }
     }
 
     public static readonly DependencyProperty DescriptionProperty =
         DependencyProperty.Register(nameof(Description), typeof(string), typeof(PortfolioEditModal), new PropertyMetadata(""));
 
-
     public string DoneButtonName
     {
-        get { return (string)GetValue(DoneButtonNameProperty); }
+        get => (string)GetValue(DoneButtonNameProperty);
         set { SetValue(DoneButtonNameProperty, value); }
     }
 
@@ -97,6 +81,15 @@ public sealed partial class PortfolioEditModal : UserControl
         Escape();
     }
 
+    private void EscapeKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+    {
+        Escape();
+    }
+    private void EscapeButton_Click(object sender, RoutedEventArgs e)
+    {
+        Escape();
+    }
+
     private void Escape()
     {
         VisualState = Visibility.Collapsed;
@@ -105,22 +98,13 @@ public sealed partial class PortfolioEditModal : UserControl
 
     private void DoneButton_Click(object _1, RoutedEventArgs _2)
     {
-        if (PortfolioName != "")
+        if (NameTextBox.Text != "")
         {
             VisualState = Visibility.Collapsed;
-            PortfolioName = PName;
-            Description = PDescription;
+            PortfolioName = NameTextBox.Text;
+            Description = DescriptionTextBox.Text;
             Done?.Invoke(this, new DoneEventArgs(false));
         }
     }
 
-    private void EscapeKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-    {
-        Escape();
-    }
-
-    private void EscapeButton_Click(object sender, RoutedEventArgs e)
-    {
-        Escape();
-    }
 }

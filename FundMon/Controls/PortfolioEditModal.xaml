@@ -36,13 +36,11 @@
                     x:Name="NameTextBox"
                     Grid.Row="0"
                     Header="Nom"
-                    Text="{x:Bind PName, Mode=TwoWay}"
                     TextChanged="NameTextBox_TextChanged" />
                 <TextBox
                     x:Name="DescriptionTextBox"
                     Grid.Row="1"
-                    Header="Description"
-                    Text="{x:Bind PDescription, Mode=TwoWay}" />
+                    Header="Description" />
                 <StackPanel
                     Grid.Row="2"
                     Orientation="Horizontal"
