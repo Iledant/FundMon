@@ -12,7 +12,7 @@ namespace FundMon.Pages;
 
 public sealed partial class PortfolioZoomPage : Page
 {
-    private PortfolioZoomViewModel ViewModel;
+    private readonly PortfolioZoomViewModel ViewModel;
     static readonly CultureInfo ci = new("fr-FR");
     private double averageCost;
     public PortfolioZoomPage()

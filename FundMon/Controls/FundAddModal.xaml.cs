@@ -66,4 +66,9 @@ public sealed partial class FundAddModal : UserControl
     {
 
     }
+
+    private void AverageCostTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        ViewModel.ParseAverageCostText(AverageCostTextBox.Text);
+    }
 }
