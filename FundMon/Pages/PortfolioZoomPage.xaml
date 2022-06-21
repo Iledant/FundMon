@@ -331,6 +331,6 @@
             </Grid>
         </StackPanel>
 
-        <controls:FundAddModal x:Name="Modal" />
+        <controls:FundAddModal x:Name="Modal" SelectedPortfolio="{x:Bind ViewModel.Portfolio}" />
     </Grid>
 </Page>

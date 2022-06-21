@@ -1,4 +1,5 @@
-﻿using FundMon.ViewModel;
+﻿using FundMon.Repository;
+using FundMon.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
@@ -8,11 +9,8 @@ namespace FundMon.Controls;
 
 public sealed partial class FundAddModal : UserControl
 {
-    private FundAddModalViewModel ViewModel;
+    private readonly FundAddModalViewModel ViewModel;
 
-    public delegate void DoneEventHandler(object sender, DoneEventArgs e);
-
-    public event DoneEventHandler Done;
     public Visibility VisualState
     {
         get => (Visibility)GetValue(VisualStateProperty);
@@ -20,33 +18,33 @@ public sealed partial class FundAddModal : UserControl
     }
 
     public static readonly DependencyProperty VisualStateProperty =
-        DependencyProperty.Register(nameof(VisualState), typeof(Visibility), typeof(PortfolioEditModal), new PropertyMetadata(Visibility.Collapsed));
+        DependencyProperty.Register(nameof(VisualState), typeof(Visibility), typeof(FundAddModal), new PropertyMetadata(Visibility.Collapsed));
+
+    public Portfolio SelectedPortfolio
+    {
+        get { return (Portfolio)GetValue(SelectedPortfolioProperty); }
+        set { 
+            SetValue(SelectedPortfolioProperty, value);
+            ViewModel.SelectedPortfolio = value;
+        }
+    }
+
+    public static readonly DependencyProperty SelectedPortfolioProperty =
+        DependencyProperty.Register(nameof(SelectedPortfolio), typeof(Portfolio), typeof(FundAddModal), new PropertyMetadata(null));
 
     public FundAddModal()
     {
         InitializeComponent();
-        ViewModel = new();
+        ViewModel = new( (v) => VisualState = v);
     }
 
-    private void RectangleTapped(object _1, TappedRoutedEventArgs _2)
-    {
-        Escape();
-    }
+    private void RectangleTapped(object _1, TappedRoutedEventArgs _2) => Escape();
 
-    private void EscapeButton_Click(object _1, RoutedEventArgs _2)
-    {
-        Escape();
-    }
-    private void EscapeKeyboardAccelerator_Invoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
-    {
-        Escape();
-    }
+    private void EscapeButton_Click(object _1, RoutedEventArgs _2) => Escape();
+    
+    private void EscapeKeyboardAccelerator_Invoked(KeyboardAccelerator _1, KeyboardAcceleratorInvokedEventArgs _2) => Escape();
 
-    private void Escape()
-    {
-        VisualState = Visibility.Collapsed;
-        Done?.Invoke(this, new DoneEventArgs(true));
-    }
+    private void Escape() => VisualState = Visibility.Collapsed;
 
     private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
@@ -60,11 +58,6 @@ public sealed partial class FundAddModal : UserControl
         if (await UserKeepsTyping())
             return;
         ViewModel.FundSearch(SearchTextBox.Text);
-    }
-
-    private void DoneButton_Click(object sender, RoutedEventArgs e)
-    {
-
     }
 
     private void AverageCostTextBox_TextChanged(object sender, TextChangedEventArgs e)

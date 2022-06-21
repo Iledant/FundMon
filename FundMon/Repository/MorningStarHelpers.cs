@@ -70,7 +70,7 @@ public static class MorningStarHelpers
                 {
                     throw new Exception("Erreur de format de réponse");
                 }
-                values.Add(new DateValue(double.Parse(h.Value, _numberFormat), new DateTime(int.Parse(h.EndDate.Substring(0, 4)),
+                values.Add(new DateValue(double.Parse(h.Value, _numberFormat), new DateTime(int.Parse(h.EndDate[..4]),
                     int.Parse(h.EndDate.Substring(5, 2)),
                     int.Parse(h.EndDate.Substring(8, 2)))));
             }
@@ -107,7 +107,7 @@ public static class MorningStarHelpers
                     pickStocks.Add(new MorningstarResponseLine
                     {
                         Name = fields[0].Trim(charToStrim),
-                        MorningStarID = fields[1].Substring(left, right - left),
+                        MorningStarID = fields[1][left..right],
                         Category = category,
                         Place = fields[4].Trim(charToStrim),
                         Abbreviation = fields[3].Trim(charToStrim)

@@ -85,7 +85,7 @@
                     Spacing="10">
                     <Button
                         x:Name="DoneButton"
-                        Click="DoneButton_Click"
+                        Command="{x:Bind ViewModel.FundAddCommand}"
                         Content="Ajouter"
                         IsEnabled="{x:Bind ViewModel.HasValidValues, Mode=OneWay}"
                         Style="{ThemeResource AccentButtonStyle}" />
