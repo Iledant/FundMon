@@ -11,19 +11,11 @@ public sealed partial class FundAddModal : UserControl
 {
     private readonly FundAddModalViewModel ViewModel;
 
-    public Visibility VisualState
-    {
-        get => (Visibility)GetValue(VisualStateProperty);
-        set => SetValue(VisualStateProperty, value);
-    }
-
-    public static readonly DependencyProperty VisualStateProperty =
-        DependencyProperty.Register(nameof(VisualState), typeof(Visibility), typeof(FundAddModal), new PropertyMetadata(Visibility.Collapsed));
-
     public Portfolio SelectedPortfolio
     {
         get { return (Portfolio)GetValue(SelectedPortfolioProperty); }
-        set { 
+        set
+        {
             SetValue(SelectedPortfolioProperty, value);
             ViewModel.SelectedPortfolio = value;
         }
@@ -35,16 +27,16 @@ public sealed partial class FundAddModal : UserControl
     public FundAddModal()
     {
         InitializeComponent();
-        ViewModel = new( (v) => VisualState = v);
+        ViewModel = new();
     }
 
     private void RectangleTapped(object _1, TappedRoutedEventArgs _2) => Escape();
 
     private void EscapeButton_Click(object _1, RoutedEventArgs _2) => Escape();
-    
+
     private void EscapeKeyboardAccelerator_Invoked(KeyboardAccelerator _1, KeyboardAcceleratorInvokedEventArgs _2) => Escape();
 
-    private void Escape() => VisualState = Visibility.Collapsed;
+    private void Escape() => ViewModel.Visibility = Visibility.Collapsed;
 
     private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
     {
@@ -60,8 +52,7 @@ public sealed partial class FundAddModal : UserControl
         ViewModel.FundSearch(SearchTextBox.Text);
     }
 
-    private void AverageCostTextBox_TextChanged(object sender, TextChangedEventArgs e)
-    {
-        ViewModel.ParseAverageCostText(AverageCostTextBox.Text);
-    }
+    private void AverageCostTextBox_TextChanged(object sender, TextChangedEventArgs e) => ViewModel.ParseAverageCostText(AverageCostTextBox.Text);
+
+    public void Show() => ViewModel.Visibility = Visibility.Visible;
 }

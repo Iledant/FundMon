@@ -12,10 +12,6 @@ namespace FundMon.ViewModel;
 
 public partial class FundAddModalViewModel : ObservableObject
 {
-    public delegate void SetVisualState(Visibility v);
-
-    private readonly SetVisualState setVisualState;
-
     public Portfolio SelectedPortfolio;
 
     private double averageCost = 0;
@@ -28,24 +24,23 @@ public partial class FundAddModalViewModel : ObservableObject
     private MorningstarResponseLine selectedLine;
 
     [ObservableProperty]
-    private bool iSInProgress = false;
+    private bool isInProgress = false;
+
+    [ObservableProperty]
+    private Visibility visibility = Visibility.Collapsed;
 
     public bool HasValidValues => selectedLine is not null && averageCost > 0;
 
-    public FundAddModalViewModel(SetVisualState setter)
-    {
-        setVisualState = setter;
-    }
-
     public async void FundSearch(string pattern)
     {
-        ISInProgress = true;
+        IsInProgress = true;
         await Task.Delay(1);
         Results = await MorningStarHelpers.FetchFunds(pattern);
-        ISInProgress = false;
+        IsInProgress = false;
         await Task.Delay(1);
     }
 
+    [ICommand]
     public void ParseAverageCostText(string text)
     {
         if (!double.TryParse(text.Replace('.',','), out averageCost))
@@ -58,12 +53,12 @@ public partial class FundAddModalViewModel : ObservableObject
     {
         if (!HasValidValues || SelectedPortfolio is null)
             return;
-        ISInProgress = true;
+        IsInProgress = true;
         await Task.Delay(1);
         Fund fund = await Repo.AddFund(selectedLine.Name, selectedLine.MorningStarID);
         Repo.AddFundToPortfolio(SelectedPortfolio.ID, fund, averageCost);
-        ISInProgress = false;
+        IsInProgress = false;
         await Task.Delay(1);
-        setVisualState?.Invoke(Visibility.Collapsed);
+        Visibility=Visibility.Collapsed;
     }
 }
