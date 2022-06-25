@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:repo="using:FundMon.Repository"
     Closed="Window_Closed"
+    SizeChanged="Window_SizeChanged"
     mc:Ignorable="d">
     <Grid RowDefinitions="32,*,Auto">
         <StackPanel
