@@ -22,7 +22,17 @@
                 <Setter Property="HorizontalContentAlignment" Value="Right" />
             </Style.Setters>
         </Style>
+        <XamlUICommand
+            x:Name="DeleteUICommand"
+            Command="{x:Bind ViewModel.DeleteFundCommand}"
+            Description="Supprimer le fond"
+            Label="Supprimer">
+            <XamlUICommand.IconSource>
+                <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE74D;" />
+            </XamlUICommand.IconSource>
+        </XamlUICommand>
     </Page.Resources>
+
     <Grid>
         <StackPanel Margin="10" Orientation="Vertical">
             <CommandBar Width="Auto" DefaultLabelPosition="Right">
@@ -117,7 +127,7 @@
                         Tag="LastMonthValue" />
                     <controls1:DataGridTemplateColumn Width="Auto">
                         <controls1:DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="repo:FundPerformance">
                                 <StackPanel Orientation="Horizontal">
                                     <Button
                                         Padding="2"
@@ -130,8 +140,8 @@
                                     </Button>
                                     <Button
                                         Padding="2"
-                                        Click="RowDeleteButton_Click"
-                                        ToolTipService.ToolTip="Supprimer">
+                                        Command="{StaticResource DeleteUICommand}"
+                                        CommandParameter="{Binding}">
                                         <FontIcon
                                             FontFamily="Segoe Fluent Icons"
                                             FontSize="15"

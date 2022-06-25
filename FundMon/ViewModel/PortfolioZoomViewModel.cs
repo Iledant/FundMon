@@ -22,6 +22,8 @@ public partial class PortfolioZoomViewModel : ObservableObject
     [ObservableProperty]
     public ObservableCollection<FundPerformance> performances;
 
+    public IRelayCommand<FundPerformance> DeleteFundCommand { get; }
+
     public Portfolio Portfolio
     {
         get => _portfolio;
@@ -31,6 +33,11 @@ public partial class PortfolioZoomViewModel : ObservableObject
             OnPropertyChanged(nameof(Portfolio));
             Performances = _portfolio.Funds;
         }
+    }
+
+    public PortfolioZoomViewModel()
+    {
+        DeleteFundCommand = new RelayCommand<FundPerformance>(RemoveFund);
     }
 
     public enum ColumnTag { None = 0, AverageCost = 1, Evolution = 2, LastValue = 3, LastWeekValue = 4, LastMonthValue = 5 };
@@ -53,7 +60,7 @@ public partial class PortfolioZoomViewModel : ObservableObject
         Repo.UpdateFundAverageCost(_portfolio.ID, fundID, averageCost);
     }
 
-    public void RemoveFund(FundPerformance fund)
+    private void RemoveFund(FundPerformance fund)
     {
         _portfolio.RemoveFund(fund);
     }

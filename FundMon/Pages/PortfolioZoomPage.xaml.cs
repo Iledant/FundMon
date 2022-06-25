@@ -14,7 +14,6 @@ namespace FundMon.Pages;
 public sealed partial class PortfolioZoomPage : Page
 {
     private readonly PortfolioZoomViewModel ViewModel;
-    static readonly CultureInfo ci = new("fr-FR");
     public PortfolioZoomPage()
     {
         InitializeComponent();
@@ -58,12 +57,6 @@ public sealed partial class PortfolioZoomPage : Page
         }
         catch (Exception)
         { }
-    }
-
-    private void RowDeleteButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is Button button && button.DataContext is FundPerformance fund)
-            ViewModel.RemoveFund(fund);
     }
 
     private void RowShowChart_Click(object sender, RoutedEventArgs e)
