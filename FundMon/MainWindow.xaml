@@ -32,12 +32,18 @@
         <Grid
             Grid.Row="2"
             Padding="2"
-            Background="{ThemeResource SystemAccentColorLight3}">
+            Background="{ThemeResource SystemAccentColorLight3}"
+            ColumnDefinitions="*,Auto"
+            ColumnSpacing="5">
             <TextBlock
-                Margin="0,0,10,0"
+                Grid.Column="0"
                 HorizontalAlignment="Right"
                 Style="{StaticResource CaptionTextBlockStyle}"
                 Text="{x:Bind ViewModel.LastLog, Mode=OneWay}" />
+            <FontIcon
+                Grid.Column="1"
+                FontFamily="Segoe Fluent Icons"
+                Glyph="&#xE788;" />
         </Grid>
     </Grid>
 </Window>
