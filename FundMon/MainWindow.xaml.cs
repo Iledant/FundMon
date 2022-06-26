@@ -22,6 +22,7 @@ public sealed partial class MainWindow : Window
         navigationService.SetNavigationFrame(RootFrame);
         RestoreSizeAndPosition();
         ViewModel = new();
+        Title = "FundMon";
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(TitleBar);
         Activated += MainWindow_Activated;
