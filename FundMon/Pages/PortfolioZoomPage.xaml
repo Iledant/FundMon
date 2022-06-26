@@ -26,6 +26,10 @@
             x:Name="DeleteUICommand"
             Command="{x:Bind ViewModel.DeleteFundCommand}"
             Description="Supprimer le fond" />
+        <XamlUICommand
+            x:Name="ShowChartUICommand"
+            Command="{x:Bind ViewModel.ShowChartCommand}"
+            Description="Graphique du fond" />
     </Page.Resources>
 
     <Grid>
@@ -34,8 +38,7 @@
                 <CommandBar.Content>
                     <StackPanel Orientation="Horizontal" Spacing="10">
                         <Button
-                            x:Name="BackButton"
-                            Click="BackButton_Click"
+                            Command="{x:Bind ViewModel.GoBackCommand}"
                             Style="{ThemeResource NavigationBackButtonNormalStyle}"
                             ToolTipService.ToolTip="Portefeuilles" />
                         <TextBlock
@@ -126,7 +129,8 @@
                                 <StackPanel Orientation="Horizontal">
                                     <Button
                                         Padding="2"
-                                        Click="RowShowChart_Click"
+                                        Command="{StaticResource ShowChartUICommand}"
+                                        CommandParameter="{x:Bind}"
                                         ToolTipService.ToolTip="Graphique de l'historique">
                                         <FontIcon
                                             FontFamily="Segoe Fluent Icons"
@@ -136,7 +140,7 @@
                                     <Button
                                         Padding="2"
                                         Command="{StaticResource DeleteUICommand}"
-                                        CommandParameter="{Binding}">
+                                        CommandParameter="{x:Bind}">
                                         <FontIcon
                                             FontFamily="Segoe Fluent Icons"
                                             FontSize="15"

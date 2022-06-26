@@ -1,17 +1,21 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI.Controls;
+using FundMon.Pages;
 using FundMon.Repository;
+using FundMon.Services;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace FundMon.ViewModel;
 
 public partial class PortfolioZoomViewModel : ObservableObject
 {
+    private readonly INavigationService navigationService;
     private Portfolio _portfolio;
     private ColumnTag _previousSortedColumTag = ColumnTag.None;
     private DataGridSortDirection? _previousSortDirection = null;
@@ -23,6 +27,10 @@ public partial class PortfolioZoomViewModel : ObservableObject
     public ObservableCollection<FundPerformance> performances;
 
     public IRelayCommand<FundPerformance> DeleteFundCommand { get; }
+
+    public IRelayCommand<FundPerformance> ShowChartCommand { get; }
+
+    public IRelayCommand GoBackCommand { get; }
 
     public Portfolio Portfolio
     {
@@ -38,6 +46,9 @@ public partial class PortfolioZoomViewModel : ObservableObject
     public PortfolioZoomViewModel()
     {
         DeleteFundCommand = new RelayCommand<FundPerformance>(RemoveFund);
+        ShowChartCommand = new RelayCommand<FundPerformance>(ShowChart);
+        navigationService = App.Current.Services.GetService<INavigationService>();
+        GoBackCommand = new RelayCommand(GoBack);
     }
 
     public enum ColumnTag { None = 0, AverageCost = 1, Evolution = 2, LastValue = 3, LastWeekValue = 4, LastMonthValue = 5 };
@@ -65,8 +76,18 @@ public partial class PortfolioZoomViewModel : ObservableObject
         _portfolio.RemoveFund(fund);
     }
 
-    public DataGridSortDirection? SortFunds(ColumnTag columnTag)
+    public DataGridSortDirection? SortFunds(string tag)
     {
+        ColumnTag columnTag;
+        try
+        {
+            columnTag = (ColumnTag)Enum.Parse(typeof(ColumnTag), tag);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+
         if (_previousSortedColumTag != columnTag)
         {
             _previousSortedColumTag = columnTag;
@@ -79,6 +100,7 @@ public partial class PortfolioZoomViewModel : ObservableObject
             else
                 _previousSortDirection = DataGridSortDirection.Ascending;
         }
+
         IOrderedEnumerable<FundPerformance> orderedFunds = columnTag switch
         {
             ColumnTag.AverageCost => _previousSortDirection == DataGridSortDirection.Ascending ?
@@ -98,7 +120,15 @@ public partial class PortfolioZoomViewModel : ObservableObject
                      (from item in _portfolio.Funds orderby item.LastMonthValue descending select item),
             _ => throw new System.NotImplementedException()
         };
+
         Performances = new(orderedFunds);
         return _previousSortDirection;
     }
+
+    private void ShowChart(FundPerformance fundPerformance)
+    {
+        navigationService.Navigate(typeof(FundChart), fundPerformance);
+    }
+
+    private void GoBack() => navigationService.GoBack();
 }
