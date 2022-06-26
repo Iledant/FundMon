@@ -1,6 +1,8 @@
 ﻿using FundMon.Pages;
 using FundMon.Repository;
+using FundMon.Services;
 using FundMon.ViewModel;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -16,14 +18,16 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        INavigationService navigationService = App.Current.Services.GetService<INavigationService>();
+        navigationService.SetNavigationFrame(RootFrame);
         RestoreSizeAndPosition();
         ViewModel = new();
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(TitleBar);
         Activated += MainWindow_Activated;
-
         Repo.Load(Config.Config.File);
-        RootFrame.Navigate(typeof(PortfoliosPage));
+        //RootFrame.Navigate(typeof(PortfoliosPage));
+        navigationService.Navigate(typeof(PortfoliosPage));
         Repo.UpdateFundsHistorical();
     }
 
