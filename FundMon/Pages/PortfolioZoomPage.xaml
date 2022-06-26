@@ -25,12 +25,7 @@
         <XamlUICommand
             x:Name="DeleteUICommand"
             Command="{x:Bind ViewModel.DeleteFundCommand}"
-            Description="Supprimer le fond"
-            Label="Supprimer">
-            <XamlUICommand.IconSource>
-                <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE74D;" />
-            </XamlUICommand.IconSource>
-        </XamlUICommand>
+            Description="Supprimer le fond" />
     </Page.Resources>
 
     <Grid>

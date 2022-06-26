@@ -49,6 +49,15 @@
                 <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE74D;" />
             </XamlUICommand.IconSource>
         </XamlUICommand>
+        <XamlUICommand
+            x:Name="ShowFundsUICommand"
+            Command="{x:Bind ViewModel.ShowFundsCommand}"
+            Description="Liste des fonds"
+            Label="Fonds">
+            <XamlUICommand.IconSource>
+                <FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE71D;" />
+            </XamlUICommand.IconSource>
+        </XamlUICommand>
     </Page.Resources>
 
     <Grid>
@@ -100,10 +109,7 @@
                                 <MenuFlyout>
                                     <MenuFlyout.Items>
                                         <MenuFlyoutItem Command="{StaticResource EditUICommand}" CommandParameter="{x:Bind}" />
-                                        <MenuFlyoutItem
-                                            Click="MenuFlyoutForward_Click"
-                                            Icon="Forward"
-                                            Text="Fonds" />
+                                        <MenuFlyoutItem Command="{StaticResource ShowFundsUICommand}" CommandParameter="{x:Bind}" />
                                         <MenuFlyoutItem Command="{StaticResource DeleteUICommand}" CommandParameter="{x:Bind}" />
                                     </MenuFlyout.Items>
                                 </MenuFlyout>

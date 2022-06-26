@@ -1,22 +1,22 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FundMon.Controls;
+using FundMon.Pages;
 using FundMon.Repository;
+using FundMon.Services;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 
 namespace FundMon.ViewModel;
 
-
-// TODO: use ViewModel to navigate
 public partial class PortfoliosViewModel : ObservableObject
 {
+    private readonly INavigationService navigationService;
+
     [ObservableProperty]
-    private Portfolio editedPortfolio = new(0,"");
+    private Portfolio editedPortfolio = new(0, "");
 
     [ObservableProperty]
     private ObservableCollection<Portfolio> portfolios = Repo.Portfolios;
@@ -36,6 +36,16 @@ public partial class PortfoliosViewModel : ObservableObject
     public IRelayCommand<Portfolio> ShowEditPortfolioModalCommand { get; }
 
     public IRelayCommand<Portfolio> DeletePortfolioCommand { get; }
+
+    public IRelayCommand<Portfolio> ShowFundsCommand { get; }
+
+    public PortfoliosViewModel()
+    {
+        ShowEditPortfolioModalCommand = new RelayCommand<Portfolio>(ShowEditPortfolioModal);
+        DeletePortfolioCommand = new RelayCommand<Portfolio>(DeletePortfolio);
+        ShowFundsCommand = new RelayCommand<Portfolio>(ShowFunds);
+        navigationService = App.Current.Services.GetService<INavigationService>();
+    }
 
     public void EditModal_Done(object sender, DoneEventArgs e)
     {
@@ -63,15 +73,14 @@ public partial class PortfoliosViewModel : ObservableObject
         ModalVisibility = Visibility.Visible;
     }
 
-    public PortfoliosViewModel()
-    {
-        ShowEditPortfolioModalCommand = new RelayCommand<Portfolio>(ShowEditPortfolioModal);
-        DeletePortfolioCommand = new RelayCommand<Portfolio>(DeletePortfolio);
-    }
-
     private void DeletePortfolio(Portfolio portfolio)
     {
         if (portfolio is not null)
             Repo.RemovePortfolio(portfolio.ID);
+    }
+
+    private void ShowFunds(Portfolio porfolio)
+    {
+        navigationService.Navigate(typeof(PortfolioZoomPage), porfolio);
     }
 }

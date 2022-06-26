@@ -3,6 +3,7 @@ using FundMon.Repository;
 using FundMon.ViewModel;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using System;
 
 namespace FundMon.Pages;
@@ -16,20 +17,9 @@ public sealed partial class PortfoliosPage : Page
         ViewModel = new();
     }
 
-    private void GridView_DoubleTapped(object sender, Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+    private void GridView_DoubleTapped(object _1, DoubleTappedRoutedEventArgs _2)
     {
         if (GridView.SelectedItem is Portfolio portfolio)
-            NavigateToPortfolioZoom(portfolio);
-    }
-
-    private void MenuFlyoutForward_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is MenuFlyoutItem item && item.DataContext is Portfolio portfolio)
-            NavigateToPortfolioZoom(portfolio);
-    }
-
-    private void NavigateToPortfolioZoom(Portfolio portfolio)
-    {
-        this.Frame.Navigate(typeof(PortfolioZoomPage), portfolio);
+            ViewModel.ShowFundsCommand.Execute(portfolio);
     }
 }
