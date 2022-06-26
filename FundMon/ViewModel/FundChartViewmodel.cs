@@ -2,6 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using FundMon.Controls;
 using FundMon.Repository;
+using FundMon.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
@@ -12,9 +14,11 @@ public partial class FundChartViewmodel : ObservableObject
 {
     private FundPerformance _fund;
 
+    private readonly INavigationService navigationService;
+
     [ObservableProperty]
     private List<DateValue> _values;
-    private Dictionary<int, DateTime> _periods;
+    private readonly Dictionary<int, DateTime> _periods;
 
     [ObservableProperty]
     [AlsoNotifyChangeFor(nameof(HasNoAverage))]
@@ -51,9 +55,10 @@ public partial class FundChartViewmodel : ObservableObject
     public bool Is6MonthsPeriod => _period == 3;
     public bool Is12MonthsPeriod => _period == 4;
 
-    public ICommand SetAverageCountCommand;
-    public ICommand ZoomOutCommand;
-    public ICommand SetPeriodCommand;
+    public IRelayCommand<int> SetAverageCountCommand;
+    public IRelayCommand ZoomOutCommand;
+    public IRelayCommand<int> SetPeriodCommand;
+    public IRelayCommand GoBackCommand;
 
     public FundPerformance Fund
     {
@@ -67,9 +72,11 @@ public partial class FundChartViewmodel : ObservableObject
 
     public FundChartViewmodel()
     {
+        navigationService = App.Current.Services.GetService<INavigationService>();
         SetAverageCountCommand = new RelayCommand<int>(SetAverageCount);
         ZoomOutCommand = new RelayCommand(ZoomOut);
         SetPeriodCommand = new RelayCommand<int>(SetPeriod);
+        GoBackCommand = new RelayCommand(GoBack);
         AverageCount = 0;
         DateTime now = DateTime.Now;
         _periods = new Dictionary<int, DateTime> {
@@ -100,4 +107,6 @@ public partial class FundChartViewmodel : ObservableObject
     {
         DateSelection = new(DateTime.MinValue,DateTime.MaxValue);
     }
+
+    private void GoBack() => navigationService.GoBack();
 }

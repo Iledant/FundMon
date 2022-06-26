@@ -26,12 +26,6 @@ public sealed partial class FundChart : Page
         ViewModel = new();
     }
 
-    private void BackButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (Frame.CanGoBack)
-            Frame.GoBack();
-    }
-
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         if (e.Parameter is FundPerformance fund)

@@ -19,7 +19,7 @@
                 <StackPanel Orientation="Horizontal" Spacing="10">
                     <Button
                         x:Name="BackButton"
-                        Click="BackButton_Click"
+                        Command="{x:Bind ViewModel.GoBackCommand}"
                         Style="{ThemeResource NavigationBackButtonNormalStyle}"
                         ToolTipService.ToolTip="Liste des portefeuilles" />
                     <TextBlock
