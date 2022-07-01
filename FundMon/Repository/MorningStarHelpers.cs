@@ -77,7 +77,7 @@ public static class MorningStarHelpers
         }
         catch (Exception e)
         {
-            Config.Config.AddLog($"Erreur de récupération des données depuis Morningstar : {e}");
+            Config.Config.AddLog($"Erreur de récupération des données depuis Morningstar : {e}","Erreur");
         }
         return values;
     }

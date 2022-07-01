@@ -27,7 +27,6 @@ public sealed partial class MainWindow : Window
         SetTitleBar(TitleBar);
         Activated += MainWindow_Activated;
         Repo.Load(Config.Config.File);
-        //RootFrame.Navigate(typeof(PortfoliosPage));
         navigationService.Navigate(typeof(PortfoliosPage));
         Repo.UpdateFundsHistorical();
     }

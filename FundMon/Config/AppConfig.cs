@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using Windows.Storage;
 
 namespace FundMon.Config;
 
 public class LogEventArgs
 {
-    public LogEventArgs(string text) { Text = text; }
+    public LogEventArgs(string text, string kind = "")
+    {
+        Text = text;
+        Kind = kind;
+    }
     public string Text { get; }
+    public string Kind { get; }
 }
 
 public static class Config
@@ -19,9 +23,9 @@ public static class Config
 
     static public FileStream File { get => file; }
 
-    static readonly private ObservableCollection<(DateTime, string)> log = new();
+    static readonly private ObservableCollection<(DateTime, string, string)> log = new();
 
-    static public ObservableCollection<(DateTime, string)> Log { get => log; }
+    static public ObservableCollection<(DateTime, string,string)> Log { get => log; }
 
     public delegate void LogEventHandler(object sender, LogEventArgs e);
 
@@ -39,9 +43,9 @@ public static class Config
         file.Close();
     }
 
-    static public void AddLog(string message)
+    static public void AddLog(string message,string kind)
     {
-        Log.Add((DateTime.Now, message));
-        LogAdded?.Invoke(null, new LogEventArgs(message));
+        Log.Add((DateTime.Now, message,kind));
+        LogAdded?.Invoke(null, new LogEventArgs(message,kind));
     }
 }
