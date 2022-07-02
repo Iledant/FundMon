@@ -14,34 +14,42 @@ public partial class MainWindowViewModel : ObservableObject
     public ObservableCollection<(DateTime, string,string)> Log => Config.Config.Log;
 
     [ObservableProperty]
-    [AlsoNotifyChangeFor(nameof(IsOpen))]
     private string lastLog = "";
 
     [ObservableProperty]
     private string lastKind = "";
 
-    public bool IsOpen => (DateTime.Now - lastChanged).TotalSeconds < 2;
+    [ObservableProperty]
+    private bool isOpen =false;
 
-    private DateTime lastChanged = DateTime.MinValue;
-    private PeriodicTimer timer;
+    private DateTime lastChanged;
 
     private void LogAdded(object sender, Config.LogEventArgs e)
     {
         LastLog = e.Text;
         LastKind = e.Kind ?? "";
         lastChanged = DateTime.Now;
+        ShowInfoBar();
     }
 
     public MainWindowViewModel()
     {
         Config.Config.LogAdded += LogAdded;
-        timer = new(TimeSpan.FromSeconds(1));
-        PeriodicUpdate();
     }
 
-    private async void PeriodicUpdate()
+    private async void ShowInfoBar()
     {
-        while (await timer.WaitForNextTickAsync())
-            OnPropertyChanged(nameof(IsOpen));
+        IsOpen = true;
+        async Task<bool> Debounce()
+        {
+            DateTime changed = lastChanged;
+            await Task.Delay(2000);
+            return changed != lastChanged;
+        }
+
+        if (await Debounce())
+            return;
+
+        IsOpen = false;
     }
 }
