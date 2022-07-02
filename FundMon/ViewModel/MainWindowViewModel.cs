@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using FundMon.Config;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +12,7 @@ namespace FundMon.ViewModel;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public ObservableCollection<(DateTime, string,string)> Log => Config.Config.Log;
+    public static ObservableCollection<(DateTime, string,string)> Log => AppConfig.Log;
 
     [ObservableProperty]
     private string lastLog = "";
@@ -34,7 +35,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     public MainWindowViewModel()
     {
-        Config.Config.LogAdded += LogAdded;
+        AppConfig.LogAdded += LogAdded;
     }
 
     private async void ShowInfoBar()

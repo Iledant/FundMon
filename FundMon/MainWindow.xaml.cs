@@ -1,4 +1,5 @@
-﻿using FundMon.Pages;
+﻿using FundMon.Config;
+using FundMon.Pages;
 using FundMon.Repository;
 using FundMon.Services;
 using FundMon.ViewModel;
@@ -26,7 +27,7 @@ public sealed partial class MainWindow : Window
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(TitleBar);
         Activated += MainWindow_Activated;
-        Repo.Load(Config.Config.File);
+        Repo.Load(AppConfig.File);
         navigationService.Navigate(typeof(PortfoliosPage));
         Repo.UpdateFundsHistorical();
     }
@@ -54,8 +55,8 @@ public sealed partial class MainWindow : Window
 
     private void Window_Closed(object sender, WindowEventArgs args)
     {
-        Repo.Save(Config.Config.File);
-        Config.Config.SaveAndClose();
+        Repo.Save(AppConfig.File);
+        AppConfig.SaveAndClose();
     }
 
     private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)

@@ -16,7 +16,7 @@ public class LogEventArgs
     public string Kind { get; }
 }
 
-public static class Config
+public static class AppConfig
 
 {
     static readonly private FileStream file;
@@ -31,7 +31,7 @@ public static class Config
 
     static public event LogEventHandler LogAdded;
 
-    static Config()
+    static AppConfig()
     {
         var configFilePath = ApplicationData.Current.LocalFolder;
         file = new FileStream(Path.Combine(configFilePath.Path, "fundmon.fmf"), FileMode.OpenOrCreate, FileAccess.ReadWrite);
