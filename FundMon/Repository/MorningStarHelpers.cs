@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using FundMon.Config;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
