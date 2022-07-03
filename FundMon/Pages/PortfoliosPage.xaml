@@ -83,27 +83,27 @@
                 SelectedItem="{x:Bind ViewModel.SelectedPortfolio, Mode=TwoWay}">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="repo:Portfolio">
-                        <UserControl>
+                        <UserControl VerticalAlignment="Stretch">
                             <Grid
-                                Height="Auto"
-                                MinWidth="200"
-                                MinHeight="90"
+                                Width="200"
+                                Height="80"
                                 Padding="10,5,10,5"
                                 Background="{StaticResource GradientBrush}"
-                                RowSpacing="5">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
+                                RowDefinitions="Auto,*">
                                 <TextBlock
                                     Grid.Row="0"
                                     Style="{ThemeResource SubtitleTextBlockStyle}"
                                     Text="{x:Bind Name, Mode=OneWay}" />
                                 <TextBlock
                                     Grid.Row="1"
+                                    VerticalAlignment="Bottom"
                                     Style="{ThemeResource CaptionTextBlockStyle}"
                                     Text="{x:Bind Description, Mode=OneWay}"
-                                    TextWrapping="WrapWholeWords" />
+                                    TextWrapping="WrapWholeWords">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="{x:Bind Description, Mode=OneWay}" VerticalOffset="-20" />
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
                             </Grid>
                             <UserControl.ContextFlyout>
                                 <MenuFlyout>
