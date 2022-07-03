@@ -44,7 +44,7 @@ public static class MorningStarHelpers
 {
     private readonly static HttpClient _client = new();
     private readonly static NumberFormatInfo _numberFormat = new CultureInfo("en-US").NumberFormat;
-    private readonly static string[] filteredCategories = { "PEA", "Fonds", "Actions" };
+    private readonly static string[] filteredCategories = { "PEA", "Fonds", "Actions", "ETFs" };
 
     public static async Task<List<DateValue>> GetHistoricalFromID(string MorningStarID, DateTime? beginDate = null, DateTime? endDate = null)
     {
