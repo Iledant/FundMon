@@ -19,9 +19,8 @@
     <Grid Visibility="{x:Bind ViewModel.Visibility, Mode=OneWay}">
         <Rectangle Fill="{ThemeResource ButtonBackgroundThemeBrush}" Tapped="RectangleTapped" />
         <Border
-            MinWidth="350"
+            Width="482"
             MinHeight="200"
-            MaxWidth="500"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -52,6 +51,7 @@
                     IsActive="{x:Bind ViewModel.IsInProgress, Mode=OneWay}" />
                 <GridView
                     Grid.Row="2"
+                    Height="168"
                     Margin="10,0,10,0"
                     ItemsSource="{x:Bind ViewModel.Results, Mode=OneWay}"
                     SelectedItem="{x:Bind ViewModel.SelectedLine, Mode=TwoWay}">
@@ -59,22 +59,35 @@
                         <DataTemplate x:DataType="repo:MorningstarResponseLine">
                             <Grid
                                 Width="150"
-                                Height="90"
+                                Height="75"
                                 Padding="5"
                                 Background="{ThemeResource SystemAccentColorLight3}"
-                                ColumnSpacing="5"
-                                RowDefinitions="Auto,Auto"
+                                RowDefinitions="32,Auto"
                                 RowSpacing="5">
                                 <TextBlock
                                     Grid.Row="0"
                                     Style="{ThemeResource CaptionTextBlockStyle}"
                                     Text="{x:Bind Name}"
-                                    TextWrapping="WrapWholeWords" />
-                                <TextBlock
+                                    TextWrapping="WrapWholeWords">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip Content="{x:Bind Name}" VerticalOffset="-30" />
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
+                                <Border
                                     Grid.Row="1"
-                                    Style="{ThemeResource CaptionTextBlockStyle}"
-                                    Text="{x:Bind Category}"
-                                    TextWrapping="WrapWholeWords" />
+                                    Width="Auto"
+                                    Padding="10,5,10,5"
+                                    HorizontalAlignment="Left"
+                                    Background="{ThemeResource SystemAccentColorLight2}"
+                                    BorderThickness="0"
+                                    CornerRadius="10">
+                                    <TextBlock
+                                        Width="Auto"
+                                        FontStyle="Italic"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="{x:Bind Category}"
+                                        TextWrapping="WrapWholeWords" />
+                                </Border>
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
