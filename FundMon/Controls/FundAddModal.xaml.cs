@@ -38,7 +38,13 @@ public sealed partial class FundAddModal : UserControl
 
     private void Escape() => ViewModel.Visibility = Visibility.Collapsed;
 
-    private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
+    public void Show()
+    {
+        SearchTextBox.Text = "";
+        ViewModel.Show();
+    }
+
+    private async void SearchTextBox_TextChanged(object _1, TextChangedEventArgs _2)
     {
         async Task<bool> UserKeepsTyping()
         {
@@ -49,10 +55,7 @@ public sealed partial class FundAddModal : UserControl
 
         if (await UserKeepsTyping())
             return;
+
         ViewModel.FundSearch(SearchTextBox.Text);
     }
-
-    private void AverageCostTextBox_TextChanged(object sender, TextChangedEventArgs e) => ViewModel.ParseAverageCostText(AverageCostTextBox.Text);
-
-    public void Show() => ViewModel.Visibility = Visibility.Visible;
 }

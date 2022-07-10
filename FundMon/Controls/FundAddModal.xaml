@@ -93,11 +93,10 @@
                     </GridView.ItemTemplate>
                 </GridView>
                 <TextBox
-                    x:Name="AverageCostTextBox"
                     Grid.Row="3"
                     Margin="10,0,10,0"
                     PlaceholderText="Coût moyen"
-                    TextChanged="AverageCostTextBox_TextChanged" />
+                    Text="{x:Bind ViewModel.AverageCostText, Mode=TwoWay}" />
                 <StackPanel
                     Grid.Row="4"
                     Margin="10,0,10,0"
