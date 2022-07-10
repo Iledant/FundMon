@@ -27,7 +27,8 @@ public static class Repo
 
         FileHelper.WriteInt(fs, Funds.Count);
         foreach (Fund f in Funds)
-            f.Save(fs);
+            if (f.LinkCount > 0)
+                f.Save(fs);
 
         FileHelper.WriteInt(fs, Portfolios.Count);
         foreach (Portfolio p in Portfolios)
@@ -41,7 +42,7 @@ public static class Repo
         List<DateValue> values = null;
         if (morningstarID is not null && morningstarID != "")
         {
-            values = await MorningStarHelpers.GetHistoricalFromID(morningstarID);
+            values = await MorningStarHelpers.GetCompactHistoricalFromID(morningstarID);
         }
         Fund f = new(maxFundID, name, morningstarID, description, values);
         Funds.Add(f);
@@ -111,53 +112,38 @@ public static class Repo
         }
     }
 
-    public static void RemovePortfolio(int portfolioID)
+    public static void RemovePortfolio(Portfolio portfolio)
     {
-        for (int i = 0; i < Portfolios.Count; i++)
-        {
-            if (Portfolios[i].ID == portfolioID)
-            {
-                Portfolios.RemoveAt(i);
-                break;
-            }
-        }
+        Portfolios.Remove(portfolio);
     }
 
-    public static void AddFundToPortfolio(int portfolioID, Fund fund, double averageCost)
+    public static void AddFundToPortfolio(Portfolio portfolio, Fund fund, double averageCost)
     {
-        for (int i = 0; i < Portfolios.Count; i++)
-        {
-            if (Portfolios[i].ID == portfolioID)
-            {
-                Portfolios[i].Funds.Add(new(fund, averageCost));
-                break;
-            }
-        }
+        portfolio.Funds.Add(new(fund, averageCost));
     }
 
-    public static void UpdateFundAverageCost(int portfolioID, int fundID, double newAverageCost)
+    public static void UpdateFundAverageCost(Portfolio portfolio, int fundID, double newAverageCost)
     {
-        Portfolio p = null;
-        for (int i = 0; i < Portfolios.Count; i++)
-        {
-            if (Portfolios[i].ID == portfolioID)
-            {
-                p = Portfolios[i];
-                break;
-            }
-        }
-
-        if (p is null)
+        if (portfolio is null)
             return;
-
-        for (int i = 0; i < p.Funds.Count; i++)
+        
+        for (int i = 0; i < portfolio.Funds.Count; i++)
         {
-            if (p.Funds[i].Fund.ID == fundID)
+            if (portfolio.Funds[i].Fund.ID == fundID)
             {
-                p.Funds[i].AverageCost = newAverageCost;
+                portfolio.Funds[i].AverageCost = newAverageCost;
                 break;
             }
         }
+    }
+
+    public static void RemoveFundFromPortfolio(Portfolio portfolio, FundPerformance fundPerformance)
+    {
+        if (!portfolio.RemoveFund(fundPerformance))
+            return;
+        fundPerformance.Fund.LinkCount--;
+        if (fundPerformance.Fund.LinkCount == 0)
+            Funds.Remove(fundPerformance.Fund); 
     }
 
     public static void Load(Stream fs)
@@ -167,6 +153,8 @@ public static class Repo
         List<Portfolio> portfolios = ReadPortfolios(fs, funds);
         CalculateMaxPortfolioID(portfolios);
         CalculateMaxFundID(funds);
+
+        funds = funds.FindAll(f => f.LinkCount > 0);
 
         Portfolios = new ObservableCollection<Portfolio>(portfolios);
         Funds = new ObservableCollection<Fund>(funds);

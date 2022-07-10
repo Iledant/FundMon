@@ -63,12 +63,12 @@ public partial class PortfolioZoomViewModel : ObservableObject
     public async void AddFund(MorningstarResponseLine line, double averageCost)
     {
         Fund fund = await Repo.AddFund(line.Name, line.MorningStarID);
-        Repo.AddFundToPortfolio(_portfolio.ID, fund, averageCost);
+        Repo.AddFundToPortfolio(_portfolio, fund, averageCost);
     }
 
     public void UpdateAverageCost(int fundID, double averageCost)
     {
-        Repo.UpdateFundAverageCost(_portfolio.ID, fundID, averageCost);
+        Repo.UpdateFundAverageCost(_portfolio, fundID, averageCost);
     }
 
     private void RemoveFund(FundPerformance fund)

@@ -75,8 +75,7 @@ public partial class PortfoliosViewModel : ObservableObject
 
     private void DeletePortfolio(Portfolio portfolio)
     {
-        if (portfolio is not null)
-            Repo.RemovePortfolio(portfolio.ID);
+        Repo.RemovePortfolio(portfolio);
     }
 
     private void ShowFunds(Portfolio porfolio)

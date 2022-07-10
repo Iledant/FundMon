@@ -45,6 +45,7 @@ public static class MorningStarHelpers
     private readonly static HttpClient _client = new();
     private readonly static NumberFormatInfo _numberFormat = new CultureInfo("en-US").NumberFormat;
     private readonly static string[] filteredCategories = { "PEA", "Fonds", "Actions", "ETFs" };
+    private readonly static CultureInfo _usCultureInfo = new("en-US");
 
     public static async Task<List<DateValue>> GetHistoricalFromID(string MorningStarID, DateTime? beginDate = null, DateTime? endDate = null)
     {
@@ -74,6 +75,43 @@ public static class MorningStarHelpers
                 values.Add(new DateValue(double.Parse(h.Value, _numberFormat), new DateTime(int.Parse(h.EndDate[..4]),
                     int.Parse(h.EndDate.Substring(5, 2)),
                     int.Parse(h.EndDate.Substring(8, 2)))));
+            }
+        }
+        catch (Exception e)
+        {
+            AppConfig.AddLog($"Erreur de récupération des données depuis Morningstar : {e}","Erreur");
+        }
+        return values;
+    }
+
+    public static async Task<List<DateValue>> GetCompactHistoricalFromID(string MorningStarID, DateTime? beginDate = null, DateTime? endDate = null)
+    {
+        string endPattern = (endDate ?? DateTime.Now).ToString("yyyy-MM-dd");
+        string beginPattern = (beginDate ?? new DateTime(1991, 11, 29)).ToString("yyyy-MM-dd");
+        string url = $"https://tools.morningstar.fr/api/rest.svc/timeseries_price/ok91jeenoo?" +
+            $"id={MorningStarID}%5D22%5D1%5D&currencyId=EUR&idtype=Morningstar&frequency=daily&" +
+            $"startDate={beginPattern}&endDate={endPattern}&outputType=COMPACTJSON";
+        List<DateValue> values = new();
+        char[] leadingCharToTrim = { ',', '[' };
+        try
+        {
+            HttpResponseMessage response = await _client.GetAsync(url);
+            string content = await response.Content.ReadAsStringAsync();
+            string innerList = content[1..^1]; // trim external square brackets
+            string[] dateValues = innerList.Split(']');
+
+            for (int i = 0; i < dateValues.Length; i++)
+            {
+                string[] dateAndValue = dateValues[i].Trim(leadingCharToTrim).Split(',');
+
+                if (dateAndValue.Length != 2)
+                    throw new Exception("Erreur de format de réponse");
+                if (!double.TryParse(dateAndValue[1], NumberStyles.Number,_usCultureInfo, out double value))
+                    throw new Exception("Erreur de format de réponse");
+                if (!long.TryParse(dateAndValue[0], out long dateInMilliseconds))
+                    throw new Exception("Erreur de format de réponse");
+
+                values.Add(new DateValue(value, new DateTime(1970, 1, 1).AddMilliseconds(dateInMilliseconds)));
             }
         }
         catch (Exception e)

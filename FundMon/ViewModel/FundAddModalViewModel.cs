@@ -26,6 +26,19 @@ public partial class FundAddModalViewModel : ObservableObject
     [ObservableProperty]
     private bool isInProgress = false;
 
+    private string averageCostText = "";
+
+    public string AverageCostText { 
+        get => averageCostText;
+        set
+        {
+            if (!double.TryParse(value.Replace('.', ','), out averageCost))
+                averageCost = 0;
+            SetProperty(ref averageCostText, value);
+            OnPropertyChanged(nameof(HasValidValues));
+        }
+    }
+
     [ObservableProperty]
     private Visibility visibility = Visibility.Collapsed;
 
@@ -41,14 +54,6 @@ public partial class FundAddModalViewModel : ObservableObject
     }
 
     [ICommand]
-    public void ParseAverageCostText(string text)
-    {
-        if (!double.TryParse(text.Replace('.',','), out averageCost))
-            averageCost = 0;
-        OnPropertyChanged(nameof(HasValidValues));
-    }
-
-    [ICommand]
     public async void FundAdd()
     {
         if (!HasValidValues || SelectedPortfolio is null)
@@ -56,9 +61,16 @@ public partial class FundAddModalViewModel : ObservableObject
         IsInProgress = true;
         await Task.Delay(1);
         Fund fund = await Repo.AddFund(selectedLine.Name, selectedLine.MorningStarID);
-        Repo.AddFundToPortfolio(SelectedPortfolio.ID, fund, averageCost);
+        Repo.AddFundToPortfolio(SelectedPortfolio, fund, averageCost);
         IsInProgress = false;
         await Task.Delay(1);
         Visibility=Visibility.Collapsed;
+    }
+
+    public void Show()
+    {
+        AverageCostText = "";
+        Results?.Clear();
+        Visibility = Visibility.Visible;
     }
 }

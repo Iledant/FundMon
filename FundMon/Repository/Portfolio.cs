@@ -64,18 +64,21 @@ public partial class Portfolio : ObservableObject
             f.Save(fs);
     }
 
-    public void RemoveFund(FundPerformance fund)
+    public bool RemoveFund(FundPerformance fund)
     {
         if (fund is null)
-            return;
+            return false;
 
         for (int i = 0; i< Funds.Count; i++)
         {
             if (Funds[i].Fund.ID == fund.Fund.ID && Funds[i].AverageCost == fund.AverageCost)
             {
+                Funds[i].Fund.LinkCount--;
                 Funds.RemoveAt(i);
-                return;
+                return true;
             }
         }
+
+        return false;
     }
 }

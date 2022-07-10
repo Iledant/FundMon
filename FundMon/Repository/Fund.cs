@@ -19,6 +19,9 @@ public partial class Fund : ObservableObject
 
     [ObservableProperty]
     private string morningStarID;
+
+    [ObservableProperty]
+    private int linkCount = 0;
     
     public int ID
     {
@@ -29,13 +32,14 @@ public partial class Fund : ObservableObject
     [ObservableProperty]
     private ObservableCollection<DateValue> historical;
 
-    public Fund(int id, string name, string morningStarID = "", string description = "", List<DateValue> historical = null)
+    public Fund(int id, string name, string morningStarID = "", string description = "", List<DateValue> historical = null, int linkCount = 0)
     {
         ID = id;
         Name = name;
         Description = description;
         MorningStarID = morningStarID;
         Historical = historical is null ? new() : new(historical);
+        LinkCount = linkCount;
     }
 
     public Fund(Stream fs)

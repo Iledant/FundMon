@@ -50,6 +50,7 @@ public partial class FundPerformance : ObservableObject, IEditableObject
             if (fundCollection[i].ID == ID)
             {
                 Fund = fundCollection[i];
+                Fund.LinkCount++;
                 break;
             }
         }
