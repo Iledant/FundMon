@@ -25,7 +25,8 @@ public static class Repo
         byte[] headerBytes = Encoding.UTF8.GetBytes(Header);
         fs.Write(headerBytes, 0, headerBytes.Length);
 
-        FileHelper.WriteInt(fs, Funds.Count);
+        int count = Funds.Count<Fund>(f => f.LinkCount > 0);
+        FileHelper.WriteInt(fs, count);
         foreach (Fund f in Funds)
             if (f.LinkCount > 0)
                 f.Save(fs);
@@ -120,6 +121,7 @@ public static class Repo
     public static void AddFundToPortfolio(Portfolio portfolio, Fund fund, double averageCost)
     {
         portfolio.Funds.Add(new(fund, averageCost));
+        fund.LinkCount++;
     }
 
     public static void UpdateFundAverageCost(Portfolio portfolio, int fundID, double newAverageCost)

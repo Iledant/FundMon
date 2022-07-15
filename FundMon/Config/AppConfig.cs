@@ -16,6 +16,11 @@ public class LogEventArgs
     public string Kind { get; }
 }
 
+public static class AppMode
+{
+    static public bool IsTestRunning = false;
+}
+
 public static class AppConfig
 
 {
@@ -33,14 +38,20 @@ public static class AppConfig
 
     static AppConfig()
     {
-        var configFilePath = ApplicationData.Current.LocalFolder;
-        file = new FileStream(Path.Combine(configFilePath.Path, "fundmon.fmf"), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        if (!AppMode.IsTestRunning)
+        {
+            StorageFolder configFilePath = ApplicationData.Current.LocalFolder;
+            file = new FileStream(Path.Combine(configFilePath.Path, "fundmon.fmf"), FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        }
     }
 
     static public void SaveAndClose()
     {
-        file.Flush();
-        file.Close();
+        if (file is not null)
+        {
+            file.Flush();
+            file.Close();
+        }
     }
 
     static public void AddLog(string message,string kind)
