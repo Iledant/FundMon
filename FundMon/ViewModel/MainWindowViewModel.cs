@@ -44,7 +44,7 @@ public partial class MainWindowViewModel : ObservableObject
         async Task<bool> Debounce()
         {
             DateTime changed = lastChanged;
-            await Task.Delay(2000);
+            await Task.Delay(5000);
             return changed != lastChanged;
         }
 

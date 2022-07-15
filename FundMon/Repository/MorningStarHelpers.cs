@@ -47,43 +47,6 @@ public static class MorningStarHelpers
     private readonly static string[] filteredCategories = { "PEA", "Fonds", "Actions", "ETFs" };
     private readonly static CultureInfo _usCultureInfo = new("en-US");
 
-    public static async Task<List<DateValue>> GetHistoricalFromID(string MorningStarID, DateTime? beginDate = null, DateTime? endDate = null)
-    {
-        string endPattern = (endDate ?? DateTime.Now).ToString("yyyy-MM-dd");
-        string beginPattern = (beginDate ?? new DateTime(1991, 11, 29)).ToString("yyyy-MM-dd");
-        string url = $"https://tools.morningstar.fr/api/rest.svc/timeseries_price/ok91jeenoo?" +
-            $"id={MorningStarID}&currencyId=EUR&idtype=Morningstar&frequency=daily&" +
-            $"startDate={beginPattern}&endDate={endPattern}&outputType=JSON";
-        List<DateValue> values = new();
-
-        try
-        {
-            HttpResponseMessage response = await _client.GetAsync(url);
-            string content = await response.Content.ReadAsStringAsync();
-            MorningStarPayloadRoot? root = JsonConvert.DeserializeObject<MorningStarPayloadRoot>(content);
-            List<HistoryDetail>? historyDetails = root?.TimeSeries?.Security?[0].HistoryDetail;
-
-            if (historyDetails is null)
-                return values;
-
-            foreach (HistoryDetail h in historyDetails)
-            {
-                if (h.EndDate is null || h.EndDate.Length < 10 || h.Value is null)
-                {
-                    throw new Exception("Erreur de format de réponse");
-                }
-                values.Add(new DateValue(double.Parse(h.Value, _numberFormat), new DateTime(int.Parse(h.EndDate[..4]),
-                    int.Parse(h.EndDate.Substring(5, 2)),
-                    int.Parse(h.EndDate.Substring(8, 2)))));
-            }
-        }
-        catch (Exception e)
-        {
-            AppConfig.AddLog($"Erreur de récupération des données depuis Morningstar : {e}","Erreur");
-        }
-        return values;
-    }
-
     public static async Task<List<DateValue>> GetCompactHistoricalFromID(string MorningStarID, DateTime? beginDate = null, DateTime? endDate = null)
     {
         string endPattern = (endDate ?? DateTime.Now).ToString("yyyy-MM-dd");
@@ -100,7 +63,7 @@ public static class MorningStarHelpers
             string innerList = content[1..^1]; // trim external square brackets
             string[] dateValues = innerList.Split(']');
 
-            for (int i = 0; i < dateValues.Length; i++)
+            for (int i = 0; i < dateValues.Length-1; i++)
             {
                 string[] dateAndValue = dateValues[i].Trim(leadingCharToTrim).Split(',');
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FundMon.Repository;
 
@@ -13,7 +14,7 @@ public partial class Fund : ObservableObject
 
     [ObservableProperty]
     private string name;
-    
+
     [ObservableProperty]
     private string description;
 
@@ -22,7 +23,7 @@ public partial class Fund : ObservableObject
 
     [ObservableProperty]
     private int linkCount = 0;
-    
+
     public int ID
     {
         get => id;
@@ -74,30 +75,32 @@ public partial class Fund : ObservableObject
             value.Save(fs);
     }
 
-    public async void FetchHistorical()
+    public async Task<int> FetchHistorical()
     {
+        int count = 0;
         if (MorningStarID == "")
-            return;
+            return count;
 
         DateTime latestDate = Historical.Max(dv => dv.Date);
-        List<DateValue> historical = await MorningStarHelpers.GetHistoricalFromID(MorningStarID, latestDate);
+        List<DateValue> historical = await MorningStarHelpers.GetCompactHistoricalFromID(MorningStarID, latestDate);
         if (historical is null)
-            return;
-        
+            return count;
+
         List<DateValue> oldHistorical = Historical.ToList();
-        foreach (DateValue value in historical)
+        for (int j = 0; j < historical.Count; j++)
         {
             for (int i = 0; i < oldHistorical.Count; i++)
             {
-                if (oldHistorical[i].Date == value.Date)
+                if (oldHistorical[i].Date == historical[j].Date)
                 {
                     oldHistorical.RemoveAt(i);
                     break;
                 }
             }
-            oldHistorical.Add(value);
+            oldHistorical.Add(historical[j]);
         }
         oldHistorical.Sort((a, b) => DateTime.Compare(a.Date, b.Date));
         Historical = new ObservableCollection<DateValue>(oldHistorical);
+        return count;
     }
 }

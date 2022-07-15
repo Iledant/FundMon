@@ -216,9 +216,8 @@ public static class Repo
     {
         foreach (Fund f in Funds)
         {
-            var historical = await MorningStarHelpers.GetHistoricalFromID(f.MorningStarID);
-            f.Historical = new ObservableCollection<DateValue>(historical);
-            AppConfig.AddLog($"Historique de {f.Name} mis à jour","Info");
+            int count = await f.FetchHistorical();
+            AppConfig.AddLog($"Historique de {f.Name} mis à jour, {count} valeurs ajoutées","Info");
         }
     }
 }
