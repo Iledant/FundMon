@@ -288,9 +288,7 @@ public sealed partial class LineChart : UserControl
     private void FetchSelectedValues()
     {
         if (DateSelection.Begin == DateSelection.End)
-        {
             _selectedValues = Values;
-        }
         else
         {
             _selectedValues = Values.FindAll(d => d.Date >= DateSelection.Begin && d.Date <= DateSelection.End);
@@ -332,8 +330,8 @@ public sealed partial class LineChart : UserControl
 
     private void CalculateVerticalAxisWidth()
     {
-        double digits = Math.Floor(Math.Log10(_verticalAxisMaxVal / 10));
-        _verticalAxisTextFormat = "{0:" + ((digits > 0) ? "G0" : $"F{-digits}") + "}";
+        double digits = -Math.Floor(Math.Log10(_verticalAxisMaxVal / 10));
+        _verticalAxisTextFormat = "{0:" + ((digits <= 0) ? "G0" : $"F{digits}") + "}";
         TextBlock tb = new()
         {
             Text = string.Format(_verticalAxisTextFormat, _verticalAxisMaxVal),
@@ -346,7 +344,7 @@ public sealed partial class LineChart : UserControl
     private void CalculateHorizontalAxisHeight()
     {
         TextBlock tb = new();
-        TimeSpan timeSpan = _selectedValues[_selectedValues.Count - 1].Date - _selectedValues[0].Date;
+        TimeSpan timeSpan = _selectedValues[^1].Date - _selectedValues[0].Date;
         _horizontalAxisTextFormat = timeSpan.TotalDays > 365 ? "{0:MM/yy}" : "{0:dd/MM/yy}";
         tb.Text = string.Format("{0:dd/MM/yy}", _selectedValues[0].Date);
         tb.FontSize = AxisTextSize;
@@ -387,16 +385,18 @@ public sealed partial class LineChart : UserControl
         }
 
         _firstTicks = _selectedValues[0].Date.Ticks;
-        _horizontalScale = (Box.ActualWidth - (2 * ChartPadding) - (2 * InnerMargin) - _verticalAxisTextWidth - _halfDateLabelWidth) / (_selectedValues[_selectedValues.Count - 1].Date.Ticks - _firstTicks);
+        _horizontalScale = (Box.ActualWidth - (2 * ChartPadding) - (2 * InnerMargin) - _verticalAxisTextWidth - _halfDateLabelWidth) / (_selectedValues[^1].Date.Ticks - _firstTicks);
     }
 
     private void DrawBackground()
     {
-        PointCollection points = new();
-        points.Add(new(ChartPadding, ChartPadding));
-        points.Add(new(Box.ActualWidth - ChartPadding, ChartPadding));
-        points.Add(new(Box.ActualWidth - ChartPadding, Box.ActualHeight - ChartPadding));
-        points.Add(new(ChartPadding, Box.ActualHeight - ChartPadding));
+        PointCollection points = new()
+        {
+            new(ChartPadding, ChartPadding),
+            new(Box.ActualWidth - ChartPadding, ChartPadding),
+            new(Box.ActualWidth - ChartPadding, Box.ActualHeight - ChartPadding),
+            new(ChartPadding, Box.ActualHeight - ChartPadding)
+        };
 
         BackgroundRectangle.Points = points;
     }
@@ -470,12 +470,14 @@ public sealed partial class LineChart : UserControl
         _verticalAxisTickMarks = new Line[11];
         for (int i = 0; i < _verticalTicks.Length; i++)
         {
-            Line line = new();
-            line.X1 = VerticalAxis.X1 - InnerMargin;
-            line.X2 = VerticalAxis.X1;
-            line.Y1 = _verticalTicks[i];
-            line.Y2 = _verticalTicks[i];
-            line.Stroke = AxisStroke;
+            Line line = new()
+            {
+                X1 = VerticalAxis.X1 - InnerMargin,
+                X2 = VerticalAxis.X1,
+                Y1 = _verticalTicks[i],
+                Y2 = _verticalTicks[i],
+                Stroke = AxisStroke
+            };
             _verticalAxisTickMarks[i] = line;
             Box.Children.Add(line);
         }
@@ -491,9 +493,11 @@ public sealed partial class LineChart : UserControl
         _verticalLabelTextBoxes = new TextBlock[_verticalTicks.Length];
         for (int i = 0; i < _verticalTicks.Length; i++)
         {
-            TextBlock tb = new();
-            tb.Text = string.Format(_verticalAxisTextFormat, tick * (_verticalTicks.Length - i - 1));
-            tb.FontSize = AxisTextSize;
+            TextBlock tb = new()
+            {
+                Text = string.Format(_verticalAxisTextFormat, tick * (_verticalTicks.Length - i - 1)),
+                FontSize = AxisTextSize
+            };
             tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             Box.Children.Add(tb);
             _verticalLabelTextBoxes[i] = tb;
@@ -512,10 +516,12 @@ public sealed partial class LineChart : UserControl
         _horizontalAxisTickMarks = new Line[11];
         for (int i = 0; i < 11; i++)
         {
-            Line line = new();
-            line.Y1 = HorizontalAxis.Y1;
-            line.Y2 = HorizontalAxis.Y1 + InnerMargin;
-            line.X1 = HorizontalAxis.X1 + i * tick;
+            Line line = new()
+            {
+                Y1 = HorizontalAxis.Y1,
+                Y2 = HorizontalAxis.Y1 + InnerMargin,
+                X1 = HorizontalAxis.X1 + i * tick
+            };
             line.X2 = line.X1;
             line.Stroke = AxisStroke;
             _horizontalAxisTickMarks[i] = line;
@@ -525,7 +531,7 @@ public sealed partial class LineChart : UserControl
 
     private void DrawHorizontalLabels()
     {
-        long tick = (_selectedValues[_selectedValues.Count - 1].Date.Ticks - _selectedValues[0].Date.Ticks) / 10;
+        long tick = (_selectedValues[^1].Date.Ticks - _selectedValues[0].Date.Ticks) / 10;
         foreach (TextBlock tb in _horizontalLabelTextBoxes)
         {
             _ = Box.Children.Remove(tb);
@@ -533,9 +539,11 @@ public sealed partial class LineChart : UserControl
         _horizontalLabelTextBoxes = new TextBlock[11];
         for (int i = 0; i < 11; i++)
         {
-            TextBlock tb = new();
-            tb.Text = string.Format(_horizontalAxisTextFormat, new DateTime(tick * i + _selectedValues[0].Date.Ticks));
-            tb.FontSize = AxisTextSize;
+            TextBlock tb = new()
+            {
+                Text = string.Format(_horizontalAxisTextFormat, new DateTime(tick * i + _selectedValues[0].Date.Ticks)),
+                FontSize = AxisTextSize
+            };
             tb.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
             Box.Children.Add(tb);
             _horizontalLabelTextBoxes[i] = tb;
