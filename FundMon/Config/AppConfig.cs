@@ -21,6 +21,8 @@ public static class AppMode
     static public bool IsTestRunning = false;
 }
 
+public record LogEntry(DateTime Time, string Message,string Kind);
+
 public static class AppConfig
 
 {
@@ -28,9 +30,9 @@ public static class AppConfig
 
     static public FileStream File { get => file; }
 
-    static readonly private ObservableCollection<(DateTime, string, string)> log = new();
+    static readonly private ObservableCollection<LogEntry> log = new();
 
-    static public ObservableCollection<(DateTime, string,string)> Log { get => log; }
+    static public ObservableCollection<LogEntry> Log { get => log; }
 
     public delegate void LogEventHandler(object sender, LogEventArgs e);
 
@@ -56,7 +58,7 @@ public static class AppConfig
 
     static public void AddLog(string message,string kind)
     {
-        Log.Add((DateTime.Now, message,kind));
+        Log.Add(new(DateTime.Now, message, kind));
         LogAdded?.Invoke(null, new LogEventArgs(message,kind));
     }
 }

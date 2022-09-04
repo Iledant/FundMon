@@ -1,0 +1,41 @@
+﻿<Page
+    x:Class="FundMon.Pages.LogPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:config="using:FundMon.Config"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FundMon.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel Margin="10" Orientation="Vertical">
+            <CommandBar Width="Auto" DefaultLabelPosition="Right">
+                <CommandBar.Content>
+                    <StackPanel Orientation="Horizontal" Spacing="10">
+                        <Button
+                            Command="{x:Bind ViewModel.GoBackCommand}"
+                            Style="{ThemeResource NavigationBackButtonNormalStyle}"
+                            ToolTipService.ToolTip="Portefeuilles" />
+                        <TextBlock
+                            x:Name="TitleTextBox"
+                            Style="{ThemeResource TitleTextBlockStyle}"
+                            Text="Portefeuille" />
+                    </StackPanel>
+                </CommandBar.Content>
+            </CommandBar>
+
+            <ListView ItemsSource="{x:Bind ViewModel.Logs}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="config:LogEntry">
+                        <StackPanel Margin="5" Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind Time}" />
+                            <TextBlock Text="{x:Bind Message}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
+    </Grid>
+</Page>

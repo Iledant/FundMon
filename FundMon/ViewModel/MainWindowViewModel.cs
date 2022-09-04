@@ -12,7 +12,7 @@ namespace FundMon.ViewModel;
 
 public partial class MainWindowViewModel : ObservableObject
 {
-    public static ObservableCollection<(DateTime, string,string)> Log => AppConfig.Log;
+    public static ObservableCollection<LogEntry> Log => AppConfig.Log;
 
     [ObservableProperty]
     private string lastLog = "";

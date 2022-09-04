@@ -21,6 +21,7 @@
     <None Remove="Controls\LineChart.xaml" />
     <None Remove="Controls\PortfolioEditModal.xaml" />
     <None Remove="Pages\FundChart.xaml" />
+    <None Remove="Pages\LogPage.xaml" />
     <None Remove="Pages\PortfoliosPage.xaml" />
     <None Remove="Pages\PortfolioZoomPage.xaml" />
   </ItemGroup>
@@ -72,6 +73,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Themes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Pages\LogPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\FundAddModal.xaml">
